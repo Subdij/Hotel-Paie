@@ -1,4 +1,3 @@
-
 CREATE DATABASE HotelPaie;
 USE HotelPaie;
 
@@ -7,7 +6,8 @@ CREATE TABLE Client (
     Nom VARCHAR(50) NOT NULL,
     Prenom VARCHAR(50) NOT NULL,
     num_tel VARCHAR(15) NOT NULL,
-    adresse_mail VARCHAR(100) NOT NULL
+    adresse_mail VARCHAR(100) NOT NULL,
+    mot_de_passe VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE Reservation (

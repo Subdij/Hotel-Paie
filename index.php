@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hotel Paie</title>
-    <link rel="stylesheet" href="Styles/style.css">
+    <link rel="stylesheet" href="./Styles/style.css">
 </head>
 <body>
     <?php
@@ -29,27 +29,23 @@
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
-        echo "<h2>Chambres disponibles</h2>";
-        echo "<div class='room-cards'>";
+        echo "<h2 class='text-2xl font-bold mb-4'>Chambres disponibles</h2>";
+        echo "<div class='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>";
         while($row = $result->fetch_assoc()) {
-            echo "<div class='room-card'>";
-            echo "<h3>Chambre: " . $row["ID_chambre"]. "</h3>";
-            echo "<p>Type: " . $row["Types_chambre"]. "</p>";
-            echo "<p>Description: " . $row["description"]. "</p>";
+            echo "<div class='room-card bg-white border border-gray-200 rounded-lg shadow-md p-6'>";
+            echo "<h3 class='text-xl font-semibold mb-2'>Chambre: " . $row["ID_chambre"]. "</h3>";
+            echo "<p class='mb-2'>Type: " . $row["Types_chambre"]. "</p>";
+            echo "<p class='mb-4'>Description: " . $row["description"]. "</p>";
             echo "<form action='Pages/Reservations.php' method='get'>";
             echo "<input type='hidden' name='id_chambre' value='" . $row["ID_chambre"] . "'>";
-            echo "<input type='submit' value='Réserver'>";
+            echo "<input type='submit' value='Réserver' class='bg-blue-500 text-white px-4 py-2 rounded'>";
             echo "</form>";
             echo "</div>";
         }
         echo "</div>";
     } else {
-        echo "Aucune chambre disponible.";
+        echo "<p>Aucune chambre disponible.</p>";
     }
-
-    // Fermeture de la connexion
-    $conn->close();
     ?>
 </body>
 </html>
-
