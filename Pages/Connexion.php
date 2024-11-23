@@ -27,17 +27,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             die("Connection failed: " . $conn->connect_error);
         }
 
-        $sql = "SELECT * FROM Client WHERE adresse_mail = ? AND mot_de_passe = ?";
+        $sql = "SELECT * FROM Client WHERE adresse_mail = ?";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("ss", $email, $password);
+        $stmt->bind_param("s", $email);
         $stmt->execute();
         $result = $stmt->get_result();
 
         if ($result->num_rows > 0) {
             $user = $result->fetch_assoc();
-            $_SESSION['user'] = $user;
-            header("Location: ../index.php");
-            exit();
+            if (password_verify($password, $user['mot_de_passe'])) {
+                $_SESSION['user'] = $user;
+                header("Location: ../index.php");
+                exit();
+            } else {
+                $errors['general'] = "Email ou mot de passe invalide.";
+            }
         } else {
             $errors['general'] = "Email ou mot de passe invalide.";
         }

@@ -46,9 +46,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if ($result->num_rows > 0) {
             $errors['general'] = "Un compte avec ces informations existe déjà.";
         } else {
+            $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+
             $sql = "INSERT INTO Client (Nom, Prenom, adresse_mail, num_tel, mot_de_passe) VALUES (?, ?, ?, ?, ?)";
             $stmt = $conn->prepare($sql);
-            $stmt->bind_param("sssss", $nom, $prenom, $email, $num_tel, $password);
+            $stmt->bind_param("sssss", $nom, $prenom, $email, $num_tel, $hashed_password);
             if ($stmt->execute()) {
                 $_SESSION['user'] = [
                     'Nom' => $nom,
