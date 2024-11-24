@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $servername = "localhost";
         $username = "root";
         $password_db = "";
-        $dbname = "HotelPaie";
+        $dbname = "hotel"; // Updated database name
 
         $conn = new mysqli($servername, $username, $password_db, $dbname);
 
@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
 
         // Vérifier si l'utilisateur existe déjà
-        $sql = "SELECT * FROM Client WHERE Nom = ? AND Prenom = ? AND adresse_mail = ? AND num_tel = ?";
+        $sql = "SELECT * FROM client WHERE Nom = ? AND Prenom = ? AND adresse_mail = ? AND num_tél = ?";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("ssss", $nom, $prenom, $email, $num_tel);
         $stmt->execute();
@@ -48,15 +48,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         } else {
             $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
-            $sql = "INSERT INTO Client (Nom, Prenom, adresse_mail, num_tel, mot_de_passe) VALUES (?, ?, ?, ?, ?)";
+            $sql = "INSERT INTO client (Nom, Prenom, adresse_mail, num_tél, mot_de_passe) VALUES (?, ?, ?, ?, ?)";
             $stmt = $conn->prepare($sql);
-            $stmt->bind_param("sssss", $nom, $prenom, $email, $num_tel, $hashed_password);
+            $stmt->bind_param("sssis", $nom, $prenom, $email, $num_tel, $hashed_password);
             if ($stmt->execute()) {
                 $_SESSION['user'] = [
                     'Nom' => $nom,
                     'Prenom' => $prenom,
                     'adresse_mail' => $email,
-                    'num_tel' => $num_tel
+                    'num_tél' => $num_tel
                 ];
                 header("Location: ../index.php");
                 exit();

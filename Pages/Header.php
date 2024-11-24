@@ -21,15 +21,17 @@
                 <div class="relative ml-3">
                     <div>
                         <?php if (isset($_SESSION['user'])): ?>
-                            <?php if (isset($_SESSION['user']['ID_client'])) {
-                                $id_client = $_SESSION['user']['ID_client'];
+                            <?php if (isset($_SESSION['user']['id_client'])) {
+                                $id_client = $_SESSION['user']['id_client'];
                             } else {
                                 $id_client = null;
                             } ?>
                             <?php if ($id_client == 1): ?>
                                 <a href="/Hotel-Paie/Pages/Dashboard.php" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Admin Dashboard</a>
                             <?php endif; ?>
-                            <span class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 font-bold">Bonjour, <?php echo $_SESSION['user']['Prenom'] . ' ' . $_SESSION['user']['Nom']; ?></span>
+                            <span class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 font-bold">
+                                Bonjour, <?php echo isset($_SESSION['user']['Prenom']) ? $_SESSION['user']['Prenom'] : ''; ?> <?php echo $_SESSION['user']['Nom']; ?>
+                            </span>
                             <a href="/Hotel-Paie/Pages/logout.php" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Déconnexion</a>
                         <?php else: ?>
                             <a href="/Hotel-Paie/Pages/Connexion.php" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Connexion</a>

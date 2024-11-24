@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $servername = "localhost";
         $username = "root";
         $password_db = "";
-        $dbname = "HotelPaie";
+        $dbname = "hotel"; // Updated database name
 
         $conn = new mysqli($servername, $username, $password_db, $dbname);
 
@@ -27,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             die("Connection failed: " . $conn->connect_error);
         }
 
-        $sql = "SELECT * FROM Client WHERE adresse_mail = ?";
+        $sql = "SELECT * FROM client WHERE adresse_mail = ?";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("s", $email);
         $stmt->execute();

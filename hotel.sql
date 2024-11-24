@@ -51,11 +51,13 @@ CREATE TABLE `chambre` (
 --
 
 CREATE TABLE `client` (
-  `id_client` int(11) NOT NULL,
+  `id_client` int(11) NOT NULL AUTO_INCREMENT,
   `Nom` varchar(100) NOT NULL,
-  `Prénom` varchar(100) NOT NULL,
+  `Prenom` varchar(100) NOT NULL,
   `num_tél` int(11) NOT NULL,
-  `adresse_mail` varchar(100) NOT NULL
+  `adresse_mail` varchar(100) NOT NULL,
+  `mot_de_passe` varchar(255) NOT NULL,
+  PRIMARY KEY (`id_client`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
