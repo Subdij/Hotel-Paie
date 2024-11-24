@@ -28,8 +28,9 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `annulation` (
-  `id_annulation` int(11) NOT NULL,
-  `id_reservation` int(11) NOT NULL
+  `id_annulation` int(11) NOT NULL AUTO_INCREMENT,
+  `id_reservation` int(11) NOT NULL,
+  PRIMARY KEY (`id_annulation`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -39,9 +40,10 @@ CREATE TABLE `annulation` (
 --
 
 CREATE TABLE `chambre` (
-  `id_chambre` int(11) NOT NULL,
+  `id_chambre` int(11) NOT NULL AUTO_INCREMENT,
   `type_chambre` varchar(100) NOT NULL,
-  `prix_par_nuit` float NOT NULL
+  `prix_par_nuit` float NOT NULL,
+  PRIMARY KEY (`id_chambre`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -67,9 +69,10 @@ CREATE TABLE `client` (
 --
 
 CREATE TABLE `disponibilité` (
-  `id_disponibilité` int(11) NOT NULL,
+  `id_disponibilité` int(11) NOT NULL AUTO_INCREMENT,
   `id_chambre` int(11) NOT NULL,
-  `id_reservation` int(11) NOT NULL
+  `id_reservation` int(11) NOT NULL,
+  PRIMARY KEY (`id_disponibilité`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -79,12 +82,13 @@ CREATE TABLE `disponibilité` (
 --
 
 CREATE TABLE `paiement` (
-  `id_paiement` int(11) NOT NULL,
+  `id_paiement` int(11) NOT NULL AUTO_INCREMENT,
   `mode_paiement` varchar(100) NOT NULL,
   `statut_paiement` varchar(100) NOT NULL,
   `date_paiement` date DEFAULT NULL,
   `prix_total` float NOT NULL,
-  `id_reservation` int(11) NOT NULL
+  `id_reservation` int(11) NOT NULL,
+  PRIMARY KEY (`id_paiement`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -94,14 +98,15 @@ CREATE TABLE `paiement` (
 --
 
 CREATE TABLE `réservation` (
-  `id_reservation` int(11) NOT NULL,
+  `id_reservation` int(11) NOT NULL AUTO_INCREMENT,
   `nombre_voyageurs` int(11) NOT NULL,
   `date_reservation` date NOT NULL,
   `date_debut_sejour` date NOT NULL,
   `date_fin_sejour` date NOT NULL,
   `options` varchar(150) DEFAULT NULL,
   `prix_total` float NOT NULL,
-  `id_client` int(11) NOT NULL
+  `id_client` int(11) NOT NULL,
+  PRIMARY KEY (`id_reservation`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -113,6 +118,9 @@ CREATE TABLE `réservation` (
 --
 ALTER TABLE `annulation`
   ADD PRIMARY KEY (`id_annulation`);
+
+ALTER TABLE `annulation`
+  ADD CONSTRAINT `annulation_reservation_fk` FOREIGN KEY (`id_reservation`) REFERENCES `réservation` (`id_reservation`);
 
 --
 -- Index pour la table `chambre`
@@ -132,17 +140,28 @@ ALTER TABLE `client`
 ALTER TABLE `disponibilité`
   ADD PRIMARY KEY (`id_disponibilité`);
 
+ALTER TABLE `disponibilité`
+  ADD CONSTRAINT `disponibilite_chambre_fk` FOREIGN KEY (`id_chambre`) REFERENCES `chambre` (`id_chambre`),
+  ADD CONSTRAINT `disponibilite_reservation_fk` FOREIGN KEY (`id_reservation`) REFERENCES `réservation` (`id_reservation`);
+
 --
 -- Index pour la table `paiement`
 --
 ALTER TABLE `paiement`
   ADD PRIMARY KEY (`id_paiement`);
 
+ALTER TABLE `paiement`
+  ADD CONSTRAINT `paiement_reservation_fk` FOREIGN KEY (`id_reservation`) REFERENCES `réservation` (`id_reservation`);
+
 --
 -- Index pour la table `réservation`
 --
 ALTER TABLE `réservation`
   ADD PRIMARY KEY (`id_reservation`);
+
+ALTER TABLE `réservation`
+  ADD CONSTRAINT `reservation_client_fk` FOREIGN KEY (`id_client`) REFERENCES `client` (`id_client`);
+
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
