@@ -9,7 +9,7 @@
     <label for="prenom">Prénom:</label>
     <input type="text" id="prenom" name="prenom" required><br><br>
     <label for="num_tel">Numéro de téléphone:</label>
-    <input type="text" id="num_tel" name="num_tel" required><br><br>
+    <input type="tel" id="num_tel" name="num_tel" pattern="[0-9]{10}" required><br><br>
     <label for="adresse_mail">Adresse e-mail:</label>
     <input type="email" id="adresse_mail" name="adresse_mail" required><br><br>
     <label for="date_debut">Date de début:</label>

@@ -50,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $sql = "INSERT INTO client (Nom, Prenom, adresse_mail, num_tél, mot_de_passe) VALUES (?, ?, ?, ?, ?)";
             $stmt = $conn->prepare($sql);
-            $stmt->bind_param("sssis", $nom, $prenom, $email, $num_tel, $hashed_password);
+            $stmt->bind_param("sssss", $nom, $prenom, $email, $num_tel, $hashed_password);
             if ($stmt->execute()) {
                 $_SESSION['user'] = [
                     'Nom' => $nom,
@@ -122,7 +122,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <div class="flex-1">
           <label for="num_tel" class="block text-sm/6 font-medium text-gray-900">Numéro de téléphone</label>
           <div class="mt-2">
-            <input id="num_tel" name="num_tel" type="text" required class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6">
+            <input id="num_tel" name="num_tel" type="tel" pattern="[0-9]{10}" required class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6">
             <?php if (isset($errors['num_tel'])): ?>
               <p class="text-red-500 text-sm" style="color: red; font-weight: 700;"><?php echo $errors['num_tel']; ?></p>
             <?php endif; ?>
