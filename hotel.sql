@@ -117,29 +117,11 @@ CREATE TABLE `réservation` (
 -- Index pour la table `annulation`
 --
 ALTER TABLE `annulation`
-  ADD PRIMARY KEY (`id_annulation`);
-
-ALTER TABLE `annulation`
   ADD CONSTRAINT `annulation_reservation_fk` FOREIGN KEY (`id_reservation`) REFERENCES `réservation` (`id_reservation`);
-
---
--- Index pour la table `chambre`
---
-ALTER TABLE `chambre`
-  ADD PRIMARY KEY (`id_chambre`);
-
---
--- Index pour la table `client`
---
-ALTER TABLE `client`
-  ADD PRIMARY KEY (`id_client`);
 
 --
 -- Index pour la table `disponibilité`
 --
-ALTER TABLE `disponibilité`
-  ADD PRIMARY KEY (`id_disponibilité`);
-
 ALTER TABLE `disponibilité`
   ADD CONSTRAINT `disponibilite_chambre_fk` FOREIGN KEY (`id_chambre`) REFERENCES `chambre` (`id_chambre`),
   ADD CONSTRAINT `disponibilite_reservation_fk` FOREIGN KEY (`id_reservation`) REFERENCES `réservation` (`id_reservation`);
@@ -148,17 +130,11 @@ ALTER TABLE `disponibilité`
 -- Index pour la table `paiement`
 --
 ALTER TABLE `paiement`
-  ADD PRIMARY KEY (`id_paiement`);
-
-ALTER TABLE `paiement`
   ADD CONSTRAINT `paiement_reservation_fk` FOREIGN KEY (`id_reservation`) REFERENCES `réservation` (`id_reservation`);
 
 --
 -- Index pour la table `réservation`
 --
-ALTER TABLE `réservation`
-  ADD PRIMARY KEY (`id_reservation`);
-
 ALTER TABLE `réservation`
   ADD CONSTRAINT `reservation_client_fk` FOREIGN KEY (`id_client`) REFERENCES `client` (`id_client`);
 
