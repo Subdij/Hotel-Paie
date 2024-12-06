@@ -2,11 +2,20 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport"="width=device-width, initial-scale=1.0">
     <title>Hotel Paie</title>
     <link rel="stylesheet" href="./Styles/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <style>
+        .fixed-size {
+            width: 400px; /* Increased width */
+            height: 250px; /* Set a fixed height */
+            object-fit: cover; /* Ensure the image covers the entire area */
+        }
+    </style>
 </head>
-<body>
+<body class="bg-gray-900 text-white pt-16">
     <?php
     include 'Pages/Header.php';
 
@@ -24,28 +33,64 @@
         die("Connection failed: " . $conn->connect_error);
     }
 
-    // Récupération des chambres disponibles
-    $sql = "SELECT * FROM Chambre";
+    // Fetch room details
+    $sql = "SELECT type_chambre, prix_par_nuit, image_url FROM chambre LIMIT 3";
     $result = $conn->query($sql);
-
-    if ($result->num_rows > 0) {
-        echo "<h2 class='text-2xl font-bold mb-4'>Chambres disponibles</h2>";
-        echo "<div class='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>";
-        while($row = $result->fetch_assoc()) {
-            echo "<div class='room-card bg-white border border-gray-200 rounded-lg shadow-md p-6'>";
-            echo "<h3 class='text-xl font-semibold mb-2'>Chambre: " . $row["ID_chambre"]. "</h3>";
-            echo "<p class='mb-2'>Type: " . $row["Types_chambre"]. "</p>";
-            echo "<p class='mb-4'>Description: " . $row["description"]. "</p>";
-            echo "<form action='Pages/Reservations.php' method='get'>";
-            echo "<input type='hidden' name='id_chambre' value='" . $row["ID_chambre"] . "'>";
-            echo "<input type='submit' value='Réserver' class='bg-blue-500 text-white px-4 py-2 rounded'>";
-            echo "</form>";
-            echo "</div>";
-        }
-        echo "</div>";
-    } else {
-        echo "<p>Aucune chambre disponible.</p>";
-    }
     ?>
+
+<div class="bg-gray-900">
+  <div class="relative isolate px-6 pt-14 lg:px-8" style="background-image: url('https://www.luxinmo.com/images/blogs/hoteles-alicante.webp'); background-size: cover; background-position: center;">
+    <div class="absolute inset-0 bg-black opacity-70"></div>
+    <div class="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80" aria-hidden="true">
+      <div class="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-30 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]" style="clip-path: polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)"></div>
+    </div>
+    <div class="relative mx-auto max-w-2xl py-32 sm:py-48 lg:py-56">
+      <div class="text-center">
+        <h1 class="text-balance text-5xl font-semibold tracking-tight text-white sm:text-7xl">Réservez votre chambre d'hôtel</h1>
+        <p class="mt-8 text-pretty text-lg font-medium text-gray-200 sm:text-xl/8">Profitez de nos offres exclusives et réservez votre séjour dès maintenant.</p>
+        <div class="mt-10 flex items-center justify-center gap-x-6">
+          <a href="#" class="rounded-md bg-indigo-600 px-3.5 py-2.5 text-lg font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Découvrer nos Chambres !</a>
+        </div>
+      </div>
+    </div>
+    <div class="absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]" aria-hidden="true">
+      <div class="relative left-[calc(50%+3rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-30 sm:left-[calc(50%+36rem)] sm:w-[72.1875rem]" style="clip-path: polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)"></div>
+    </div>
+  </div>
+</div>
+
+<div class="bg-gray-100">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div class="mx-auto max-w-2xl py-16 sm:py-24 lg:max-w-none lg:py-20">
+      <h2 class="text-center text-4xl font-bold text-gray-900 mb-20">CHAMBRES Â LA UNE</h2>
+      <div class="mt-6 space-y-12 lg:grid lg:grid-cols-3 lg:gap-x-6 lg:space-y-0">
+        <?php
+        if ($result->num_rows > 0) {
+            while($row = $result->fetch_assoc()) {
+                $image_url = $row["image_url"] ? $row["image_url"] : 'images/default.jpg';
+                echo '<div class="group relative">';
+                echo '<img src="' . $image_url . '" alt="image_chambre' . $row["type_chambre"] . '" class="fixed-size w-full rounded-lg bg-white object-cover group-hover:opacity-75">';
+                echo '<h3 class="mt-6 text-lg font-semibold text-gray-700">';
+                echo '<a href="#">';
+                echo '<span class="absolute inset-0"></span>';
+                echo $row["type_chambre"];
+                echo '</a>';
+                echo '</h3>';
+                echo '<p class="text-xl font-bold text-gray-900">' . $row["prix_par_nuit"] . ' € par nuit</p>';
+                echo '</div>';
+            }
+        } else {
+            echo "0 results";
+        }
+        $conn->close();
+        ?>
+      </div>
+      <div class="mt-10 flex items-center justify-center gap-x-6">
+          <a href="#" class="rounded-md bg-indigo-600 px-3.5 py-2.5 text-lg font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Réserver votre Chambres !</a>
+        </div>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>

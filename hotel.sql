@@ -43,6 +43,7 @@ CREATE TABLE `chambre` (
   `id_chambre` int(11) NOT NULL AUTO_INCREMENT,
   `type_chambre` varchar(100) NOT NULL,
   `prix_par_nuit` float NOT NULL,
+  `image_url` varchar(255) DEFAULT NULL, -- Added column for image URL
   PRIMARY KEY (`id_chambre`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -137,6 +138,23 @@ ALTER TABLE `paiement`
 --
 ALTER TABLE `réservation`
   ADD CONSTRAINT `reservation_client_fk` FOREIGN KEY (`id_client`) REFERENCES `client` (`id_client`);
+
+--
+-- Insert sample data into `chambre` table
+--
+INSERT INTO `chambre` (`type_chambre`, `prix_par_nuit`, `image_url`) VALUES
+('Chambre Simple', 50, 'images/chambre_simple.webp'),
+('Chambre Double', 80, 'images/chambre_double.jpg'),
+('Suite', 150, 'images/suite.jpg');
+
+-- Update existing entries to add image URLs
+UPDATE `chambre` SET `image_url` = 'images/chambre_simple.webp' WHERE `id_chambre` = 1;
+UPDATE `chambre` SET `image_url` = 'images/chambre_double.jpg' WHERE `id_chambre` = 2;
+UPDATE `chambre` SET `image_url` = 'images/suite.jpg' WHERE `id_chambre` = 3;
+UPDATE `chambre` SET `image_url` = 'images/chambre_deluxe.jpg' WHERE `id_chambre` = 4;
+UPDATE `chambre` SET `image_url` = 'images/chambre_single.jpg' WHERE `id_chambre` = 5;
+UPDATE `chambre` SET `image_url` = 'images/chambre_double.jpg' WHERE `id_chambre` = 6;
+UPDATE `chambre` SET `image_url` = 'images/suite.jpg' WHERE `id_chambre` = 7;
 
 COMMIT;
 
