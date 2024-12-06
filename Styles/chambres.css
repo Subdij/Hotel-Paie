@@ -1,0 +1,54 @@
+/* Styles pour le cadran de recherche fixe */
+.search-bar {
+    position: fixed; /* Fixe le formulaire sous le header */
+    top: 60px; /* Ajustez selon la hauteur du header */
+    left: 0;
+    width: 100%; /* Prend toute la largeur de la page */
+    background-color: #f4f4f4; /* Couleur de fond */
+    color: #333;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Ombre élégante */
+    padding: 15px 20px; /* Espacement interne */
+    z-index: 999; /* S'affiche au-dessus du contenu principal */
+    display: flex; /* Organisation en ligne des éléments */
+    justify-content: center; /* Centrer les éléments horizontalement */
+    align-items: center; /* Centrer verticalement */
+    gap: 15px; /* Espacement entre les champs */
+    border-bottom: 1px solid #ccc; /* Ligne de séparation */
+}
+
+/* Styles des champs d'entrée */
+.search-bar form input,
+.search-bar form button {
+    padding: 10px;
+    font-size: 16px; /* Taille de texte confortable */
+    border: 1px solid #ccc; /* Bordure légère */
+    border-radius: 5px; /* Coins arrondis */
+}
+
+/* Largeur spécifique pour les champs */
+.search-bar form input[type="date"],
+.search-bar form input[type="number"] {
+    width: 200px;
+}
+
+/* Bouton de recherche */
+.search-bar form button {
+    background-color: #333; /* Couleur de fond sombre */
+    color: white; /* Texte en blanc */
+    cursor: pointer; /* Pointeur interactif */
+    border: none; /* Pas de bordure */
+    font-weight: bold; /* Texte en gras */
+    transition: background-color 0.3s ease; /* Animation au survol */
+}
+
+.search-bar form button:hover {
+    background-color: #555; /* Couleur légèrement plus claire au survol */
+}
+
+/* Contenu principal */
+.presentation_chambres {
+    margin-top: 140px; /* Compense la hauteur du header + formulaire */
+    padding: 20px;
+    background-color: #f9f9f9;
+    color: #333;
+}
