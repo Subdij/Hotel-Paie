@@ -42,6 +42,8 @@ CREATE TABLE `annulation` (
 CREATE TABLE `chambre` (
   `id_chambre` int(11) NOT NULL AUTO_INCREMENT,
   `type_chambre` varchar(100) NOT NULL,
+  `description` varchar(100) NOT NULL,
+  `capacite_max` int(11) NOT NULL,
   `prix_par_nuit` float NOT NULL,
   PRIMARY KEY (`id_chambre`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -145,3 +147,13 @@ COMMIT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
+-- 
+-- Insertion valeurs chambres
+-- 
+
+INSERT INTO `chambre` VALUES (1,'Simple',"Chambre avec 1 lit simple",1,60), (2,'Simple',"Chambre avec 1 lit simple",1,60),
+(3,'Double',"Chambre avec 1 lit double",2,80), (4,'Double',"Chambre avec 1 lit double",2,80), (5,'Twin',"Chambre avec 2 lits simples",2,85),
+(6,'Twin',"Chambre avec 2 lits simples",2,85), (7,'Famille',"Chambre avec 1 lit double et 2 lits simples",4,130),
+(8,'Famille',"Chambre avec 1 lit double et 2 lits simples",4,130), (9,'Deluxe',"Chambre avec 1 lit double king size",2,100),
+(10,'Deluxe',"Chambre avec 1 lit double king size",2,100);  
