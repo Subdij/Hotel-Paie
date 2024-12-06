@@ -106,6 +106,7 @@ CREATE TABLE `réservation` (
   `options` varchar(150) DEFAULT NULL,
   `prix_total` float NOT NULL,
   `id_client` int(11) NOT NULL,
+  `id_chambre` int(11) NOT NULL,
   PRIMARY KEY (`id_reservation`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -137,6 +138,7 @@ ALTER TABLE `paiement`
 --
 ALTER TABLE `réservation`
   ADD CONSTRAINT `reservation_client_fk` FOREIGN KEY (`id_client`) REFERENCES `client` (`id_client`);
+  ADD CONSTRAINT `reservation_chambre_fk` FOREIGN KEY (`id_chambre`) REFERENCES `chambre` (`id_chambre`);
 
 COMMIT;
 
