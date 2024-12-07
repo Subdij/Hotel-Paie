@@ -101,7 +101,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </form>
 
     <p class="mt-10 text-center text-sm/6 text-gray-500">
-      Tu n'a pas de compte inscriT toi ->
+      Tu n'a pas de compte inscris toi ->
       <a href="./Inscription.php" class="font-semibold text-indigo-600 hover:text-indigo-500">Inscription</a>
     </p>
   </div>
