@@ -31,15 +31,18 @@
     <section class="search-bar">
         <form method="GET" action="chambres.php">
             <label for="checkin">Date d'arrivée :</label>
-            <input type="date" id="checkin" name="checkin" min="' . date('Y-m-d') . '" required>
+            <input type="date" id="checkin" name="checkin" value="<?= isset($_GET['checkin']) ? htmlspecialchars($_GET['checkin']) : '' ?>" min="' . date('Y-m-d') . '" required>
 
             <label for="checkout">Date de départ :</label>
-            <input type="date" id="checkout" name="checkout" required>
+            <input type="date" id="checkout" name="checkout" value="<?= isset($_GET['checkout']) ? htmlspecialchars($_GET['checkout']) : '' ?>" required>
 
             <label for="guests">Nombre de voyageurs :</label>
-            <input type="number" id="guests" name="guests" min="1" value="1" required>
+            <input type="number" id="guests" name="guests" value="<?= isset($_GET['guests']) ? htmlspecialchars($_GET['guests']) : '' ?>" min="1" value="1" required>
 
-            <button type="submit">Rechercher</button>
+            <div class="search-buttons">
+                <button type="submit">Rechercher</button>
+                <button type="button" onclick="window.location.href='chambres.php';">Clear</button>
+            </div>
         </form>
         <script>
         document.addEventListener("DOMContentLoaded", function () {
@@ -65,63 +68,119 @@
     </script>
     </section>
 
-    <section class="presentation_chambres">
-        <?php
+    <!-- Message pour les groupes de plus de 4 personnes -->
+    <?php if ($message): ?>
+        <p class="alert-message"><?= htmlspecialchars($message) ?></p>
+    <?php endif; ?>
 
-        // Récupérer les paramètres de recherche
-        $checkin = $_GET['checkin'] ?? null;
-        $checkout = $_GET['checkout'] ?? null;
-        $guests = $_GET['guests'] ?? null;
+    <section class="presentation-chambres">
+    <div class="container">
+        <!-- Cadran de filtres -->
+        <aside class="filters">
+            <h3>Filtres</h3>
+            <form method="GET" action="chambres.php">
+                <!-- Réutilisation des critères de recherche -->
+                <label for="tri">Trier par :</label>
+                <select name="tri" id="tri">
+                    <option value="prix_asc" <?= isset($_GET['tri']) && $_GET['tri'] === 'prix_asc' ? 'selected' : '' ?>>Prix croissant</option>
+                    <option value="prix_desc" <?= isset($_GET['tri']) && $_GET['tri'] === 'prix_desc' ? 'selected' : '' ?>>Prix décroissant</option>
+                </select>
 
-        // Début de la requête pour récupérer les chambres disponibles
-        $sql = "SELECT * FROM chambre WHERE 1";
+                <label for="type_chambre">Type de chambre :</label>
+                <select name="type_chambre" id="type_chambre">
+                    <option value="">Tous</option>
+                    <option value="simple" <?= isset($_GET['type_chambre']) && $_GET['type_chambre'] === 'simple' ? 'selected' : '' ?>>Simple</option>
+                    <option value="double" <?= isset($_GET['type_chambre']) && $_GET['type_chambre'] === 'double' ? 'selected' : '' ?>>Double</option>
+                    <option value="twin" <?= isset($_GET['type_chambre']) && $_GET['type_chambre'] === 'twin' ? 'selected' : '' ?>>Twin</option>
+                    <option value="deluxe" <?= isset($_GET['type_chambre']) && $_GET['type_chambre'] === 'deluxe' ? 'selected' : '' ?>>Deluxe</option>
+                    <option value="famille" <?= isset($_GET['type_chambre']) && $_GET['type_chambre'] === 'famille' ? 'selected' : '' ?>>Famille</option>
+                </select>
 
-        // Si des dates sont spécifiées, ajouter les conditions de disponibilité
-        if ($checkin && $checkout) {
-            $sql .= "
-                    AND id_chambre NOT IN (
-                    SELECT id_chambre
-                    FROM réservation
-                    WHERE (date_debut_sejour < '$checkout' AND date_fin_sejour > '$checkin')
-                )
-            ";
-        }
+                <button type="submit">Appliquer les filtres</button>
+            </form>
+        </aside>
 
-        // Si un nombre de voyageurs est spécifié, ajouter la condition de capacité maximale
-        if ($guests) {
-            $sql .= " AND capacite_max >= $guests";
-        }
+        <!-- Section des chambres -->
+        <div class="rooms-display">
+            <?php
+            // Récupérer les paramètres de recherche existants
+            $checkin = $_GET['checkin'] ?? '';
+            $checkout = $_GET['checkout'] ?? '';
+            $guests = $_GET['guests'] ?? '';
+            $tri = $_GET['tri'] ?? '';
+            $type_chambre = $_GET['type_chambre'] ?? '';
 
-        // Exécution de la requête
-        $result = $conn->query($sql);
-
-        // Afficher les chambres disponibles
-        if ($result->num_rows > 0) {
-            echo "<h2>Chambres disponibles</h2>";
-
-            // Si plus de 4 voyageurs, afficher un message
+            // Initialiser le message pour les groupes
+            $message = null;
             if ($guests > 4) {
-                echo "<p class='alert-message'>Pour les groupes de plus de 4 personnes, veuillez réserver plusieurs chambres.</p>";
+                $message = "Pour les groupes de plus de 4 personnes, veuillez réserver plusieurs chambres.";
             }
 
-            // Affichage des chambres disponibles
-            while($row = $result->fetch_assoc()) {
-                echo "<div class='room'>";
-                echo "<img src='../Ressources/chambre.jpg' alt='Chambre'>";
-                echo "<h2>Chambre #" . $row['id_chambre'] . "</h2>";
-                echo "<p>Type : " . $row['type_chambre'] . "</p>";
-                echo "<p>Prix : " . $row['prix_par_nuit'] . " € par nuit</p>";
-                echo "<p>Capacité maximale : " . $row['capacite_max'] . " personnes</p>";
-                echo "</div>";
-            }
-        } else {
-            echo "<p>Aucune chambre disponible pour les critères sélectionnés.</p>";
-        }
+            // Construire la requête SQL de base
+            $sql = "SELECT * FROM chambre WHERE 1";
 
-        // Fermeture de la connexion
-        $conn->close();
-        ?>
-    </section>
+            // Ajouter les conditions de recherche par date
+            if ($checkin && $checkout) {
+                $sql .= "
+                    AND id_chambre NOT IN (
+                        SELECT id_chambre
+                        FROM réservation
+                        WHERE (date_debut_sejour < '$checkout' AND date_fin_sejour > '$checkin')
+                    )
+                ";
+            }
+
+            // Ajouter la condition sur le nombre de voyageurs
+            if ($guests) {
+                if ($guests < 5) {
+                    $sql .= " AND capacite_max >= $guests";
+                }
+            }
+
+            // Ajouter la condition sur le type de chambre
+            if ($type_chambre) {
+                $sql .= " AND type_chambre = '$type_chambre'";
+            }
+
+            // Ajouter le tri
+            if ($tri === 'prix_asc') {
+                $sql .= " ORDER BY prix_par_nuit ASC";
+            } elseif ($tri === 'prix_desc') {
+                $sql .= " ORDER BY prix_par_nuit DESC";
+            }
+
+            // Exécuter la requête
+            $result = $conn->query($sql);
+
+            // Afficher les chambres disponibles
+            if ($result->num_rows > 0) {
+
+                // Si plus de 4 voyageurs, afficher un message
+                if ($guests > 4) {
+                    echo "<p class='alert-message'>$message</p>";
+                }
+
+                // Affichage des chambres disponibles
+                while ($row = $result->fetch_assoc()) {
+                    echo "<div class='room'>";
+                    echo "<img src='../Ressources/chambre.jpg' alt='Chambre'>";
+                    echo "<h2>Chambre " . $row['type_chambre'] . "</h2>";
+                    echo "<p>". $row['description'] . "</p>";
+                    echo "<p>Prix : " . $row['prix_par_nuit'] . " € par nuit</p>";
+                    echo "<p>Capacité maximale : " . $row['capacite_max'] . " personnes</p>";
+                    echo "</div>";
+                }
+            } else {
+                echo "<p>Aucune chambre disponible pour les critères sélectionnés.</p>";
+            }
+
+            // Fermeture de la connexion
+            $conn->close();
+            ?>
+        </div>
+    </div>
+</section>
+
 
 </body>
 </html>
