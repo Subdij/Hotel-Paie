@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le : sam. 23 nov. 2024 à 23:18
+-- Généré le : sam. 07 déc. 2024 à 23:08
 -- Version du serveur : 10.4.32-MariaDB
 -- Version de PHP : 8.2.12
 
@@ -28,9 +28,8 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `annulation` (
-  `id_annulation` int(11) NOT NULL AUTO_INCREMENT,
-  `id_reservation` int(11) NOT NULL,
-  PRIMARY KEY (`id_annulation`)
+  `id_annulation` int(11) NOT NULL,
+  `id_reservation` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -40,12 +39,29 @@ CREATE TABLE `annulation` (
 --
 
 CREATE TABLE `chambre` (
-  `id_chambre` int(11) NOT NULL AUTO_INCREMENT,
+  `id_chambre` int(11) NOT NULL,
   `type_chambre` varchar(100) NOT NULL,
+  `description` varchar(100) NOT NULL,
+  `capacite_max` int(11) NOT NULL,
   `prix_par_nuit` float NOT NULL,
-  `image_url` varchar(255) DEFAULT NULL, -- Added column for image URL
-  PRIMARY KEY (`id_chambre`)
+  `url_image` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Déchargement des données de la table `chambre`
+--
+
+INSERT INTO `chambre` (`id_chambre`, `type_chambre`, `description`, `capacite_max`, `prix_par_nuit`, `url_image`) VALUES
+(1, 'Simple', 'Chambre simple avec un lit simple et une salle de bain privée.', 1, 60, NULL),
+(2, 'Simple', 'Chambre simple avec un lit simple et une salle de bain privée.', 1, 60, NULL),
+(3, 'Double', 'Chambre double avec un lit double, une salle de bain privée et une vue sur le jardin.', 2, 80, NULL),
+(4, 'Double', 'Chambre double avec un lit double, une salle de bain privée et une vue sur le jardin.', 2, 80, NULL),
+(5, 'Twin', 'Chambre twin avec deux lits simples et une salle de bain privée.', 2, 85, NULL),
+(6, 'Twin', 'Chambre twin avec deux lits simples et une salle de bain privée.', 2, 85, NULL),
+(7, 'Famille', 'Chambre familiale avec un lit double, deux lits simples et une salle de bain privée.', 4, 130, NULL),
+(8, 'Famille', 'Chambre familiale avec un lit double, deux lits simples et une salle de bain privée.', 4, 130, NULL),
+(9, 'Deluxe', 'Chambre deluxe avec un lit double king-size, une salle de bain privée un balcon privé.', 2, 110, NULL),
+(10, 'Deluxe', 'Chambre deluxe avec un lit double king-size, une salle de bain privée un balcon privé.', 2, 110, NULL);
 
 -- --------------------------------------------------------
 
@@ -54,13 +70,11 @@ CREATE TABLE `chambre` (
 --
 
 CREATE TABLE `client` (
-  `id_client` int(11) NOT NULL AUTO_INCREMENT,
+  `id_client` int(11) NOT NULL,
   `Nom` varchar(100) NOT NULL,
-  `Prenom` varchar(100) NOT NULL,
-  `num_tél` varchar(15) NOT NULL,
-  `adresse_mail` varchar(100) NOT NULL,
-  `mot_de_passe` varchar(255) NOT NULL,
-  PRIMARY KEY (`id_client`)
+  `Prénom` varchar(100) NOT NULL,
+  `num_tél` int(11) NOT NULL,
+  `adresse_mail` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -70,10 +84,9 @@ CREATE TABLE `client` (
 --
 
 CREATE TABLE `disponibilité` (
-  `id_disponibilité` int(11) NOT NULL AUTO_INCREMENT,
+  `id_disponibilité` int(11) NOT NULL,
   `id_chambre` int(11) NOT NULL,
-  `id_reservation` int(11) NOT NULL,
-  PRIMARY KEY (`id_disponibilité`)
+  `id_reservation` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -83,13 +96,12 @@ CREATE TABLE `disponibilité` (
 --
 
 CREATE TABLE `paiement` (
-  `id_paiement` int(11) NOT NULL AUTO_INCREMENT,
+  `id_paiement` int(11) NOT NULL,
   `mode_paiement` varchar(100) NOT NULL,
   `statut_paiement` varchar(100) NOT NULL,
   `date_paiement` date DEFAULT NULL,
   `prix_total` float NOT NULL,
-  `id_reservation` int(11) NOT NULL,
-  PRIMARY KEY (`id_paiement`)
+  `id_reservation` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -99,15 +111,14 @@ CREATE TABLE `paiement` (
 --
 
 CREATE TABLE `réservation` (
-  `id_reservation` int(11) NOT NULL AUTO_INCREMENT,
+  `id_reservation` int(11) NOT NULL,
   `nombre_voyageurs` int(11) NOT NULL,
   `date_reservation` date NOT NULL,
   `date_debut_sejour` date NOT NULL,
   `date_fin_sejour` date NOT NULL,
   `options` varchar(150) DEFAULT NULL,
   `prix_total` float NOT NULL,
-  `id_client` int(11) NOT NULL,
-  PRIMARY KEY (`id_reservation`)
+  `id_client` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -118,44 +129,37 @@ CREATE TABLE `réservation` (
 -- Index pour la table `annulation`
 --
 ALTER TABLE `annulation`
-  ADD CONSTRAINT `annulation_reservation_fk` FOREIGN KEY (`id_reservation`) REFERENCES `réservation` (`id_reservation`);
+  ADD PRIMARY KEY (`id_annulation`);
+
+--
+-- Index pour la table `chambre`
+--
+ALTER TABLE `chambre`
+  ADD PRIMARY KEY (`id_chambre`);
+
+--
+-- Index pour la table `client`
+--
+ALTER TABLE `client`
+  ADD PRIMARY KEY (`id_client`);
 
 --
 -- Index pour la table `disponibilité`
 --
 ALTER TABLE `disponibilité`
-  ADD CONSTRAINT `disponibilite_chambre_fk` FOREIGN KEY (`id_chambre`) REFERENCES `chambre` (`id_chambre`),
-  ADD CONSTRAINT `disponibilite_reservation_fk` FOREIGN KEY (`id_reservation`) REFERENCES `réservation` (`id_reservation`);
+  ADD PRIMARY KEY (`id_disponibilité`);
 
 --
 -- Index pour la table `paiement`
 --
 ALTER TABLE `paiement`
-  ADD CONSTRAINT `paiement_reservation_fk` FOREIGN KEY (`id_reservation`) REFERENCES `réservation` (`id_reservation`);
+  ADD PRIMARY KEY (`id_paiement`);
 
 --
 -- Index pour la table `réservation`
 --
 ALTER TABLE `réservation`
-  ADD CONSTRAINT `reservation_client_fk` FOREIGN KEY (`id_client`) REFERENCES `client` (`id_client`);
-
---
--- Insert sample data into `chambre` table
---
-INSERT INTO `chambre` (`type_chambre`, `prix_par_nuit`, `image_url`) VALUES
-('Chambre Simple', 50, 'images/chambre_simple.webp'),
-('Chambre Double', 80, 'images/chambre_double.jpg'),
-('Suite', 150, 'images/suite.jpg');
-
--- Update existing entries to add image URLs
-UPDATE `chambre` SET `image_url` = 'images/chambre_simple.webp' WHERE `id_chambre` = 1;
-UPDATE `chambre` SET `image_url` = 'images/chambre_double.jpg' WHERE `id_chambre` = 2;
-UPDATE `chambre` SET `image_url` = 'images/suite.jpg' WHERE `id_chambre` = 3;
-UPDATE `chambre` SET `image_url` = 'images/chambre_deluxe.jpg' WHERE `id_chambre` = 4;
-UPDATE `chambre` SET `image_url` = 'images/chambre_single.jpg' WHERE `id_chambre` = 5;
-UPDATE `chambre` SET `image_url` = 'images/chambre_double.jpg' WHERE `id_chambre` = 6;
-UPDATE `chambre` SET `image_url` = 'images/suite.jpg' WHERE `id_chambre` = 7;
-
+  ADD PRIMARY KEY (`id_reservation`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
