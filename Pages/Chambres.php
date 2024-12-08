@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Réservez votre chambre</title>
     <link rel="stylesheet" href="../Styles/chambres.css">
     <link rel="stylesheet" href="../Styles/style.css">
 </head>
@@ -163,7 +163,7 @@
                 // Affichage des chambres disponibles
                 while ($row = $result->fetch_assoc()) {
                     echo "<div class='room'>";
-                    echo "<img src='../Ressources/chambre.jpg' alt='Chambre'>";
+                    echo "<img src='" . $row['url_image'] . "' alt='Chambre'>";
                     echo "<h2>Chambre " . $row['type_chambre'] . "</h2>";
                     echo "<p>". $row['description'] . "</p>";
                     echo "<p>Prix : " . $row['prix_par_nuit'] . " € par nuit</p>";
