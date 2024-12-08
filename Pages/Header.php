@@ -21,26 +21,20 @@
                     </div>
                     <div class="hidden sm:ml-6 sm:block">
                         <div class="flex space-x-4">
-                            <a href="/Hotel-Paie/index.php" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">accueil</a>
-                            <a href="#" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Team</a>
-                            <a href="#" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Projects</a>
-                            <a href="#" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Calendar</a>
+                            <a href="/Hotel-Paie/index.php" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Accueil</a>
+                            <a href="/Hotel-Paie/Pages/Chambres.php" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Liste des Chambres</a>
                         </div>
                     </div>
                 </div>
                 <div class="relative ml-3">
                     <div>
                         <?php if (isset($_SESSION['user'])): ?>
-                            <?php if (isset($_SESSION['user']['id_client'])) {
-                                $id_client = $_SESSION['user']['id_client'];
-                            } else {
-                                $id_client = null;
-                            } ?>
-                            <?php if ($id_client == 1): ?>
+                            <?php if (isset($_SESSION['user']['id_client']) && $_SESSION['user']['id_client'] == 0): ?>
                                 <a href="/Hotel-Paie/Pages/Dashboard.php" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Admin Dashboard</a>
                             <?php endif; ?>
                             <span class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 font-bold">
-                                Bonjour, <?php echo isset($_SESSION['user']['Prenom']) ? $_SESSION['user']['Prenom'] : ''; ?> <?php echo $_SESSION['user']['Nom']; ?>
+                                Bonjour, <?php echo isset($_SESSION['user']['prenom']) ? $_SESSION['user']['prenom'] : ''; ?> 
+                                <?php echo isset($_SESSION['user']['nom']) ? $_SESSION['user']['nom'] : ''; ?>
                             </span>
                             <a href="/Hotel-Paie/Pages/logout.php" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Déconnexion</a>
                         <?php else: ?>

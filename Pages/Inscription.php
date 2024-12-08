@@ -37,26 +37,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
 
         // Vérifier si l'utilisateur existe déjà
-        $sql = "SELECT * FROM client WHERE Nom = ? AND Prenom = ? AND adresse_mail = ? AND num_tél = ?";
+        $sql = "SELECT * FROM client WHERE adresse_mail = ?";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("ssss", $nom, $prenom, $email, $num_tel);
+        $stmt->bind_param("s", $email);
         $stmt->execute();
         $result = $stmt->get_result();
 
         if ($result->num_rows > 0) {
-            $errors['general'] = "Un compte avec ces informations existe déjà.";
+            $errors['general'] = "Un compte avec cette adresse mail existe déjà.";
         } else {
             $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
-            $sql = "INSERT INTO client (Nom, Prenom, adresse_mail, num_tél, mot_de_passe) VALUES (?, ?, ?, ?, ?)";
+            $sql = "INSERT INTO client (nom, prenom, adresse_mail, num_tel, mot_de_passe) VALUES (?, ?, ?, ?, ?)";
             $stmt = $conn->prepare($sql);
             $stmt->bind_param("sssss", $nom, $prenom, $email, $num_tel, $hashed_password);
             if ($stmt->execute()) {
                 $_SESSION['user'] = [
-                    'Nom' => $nom,
-                    'Prenom' => $prenom,
+                    'nom' => $nom,
+                    'prenom' => $prenom,
                     'adresse_mail' => $email,
-                    'num_tél' => $num_tel
+                    'num_tel' => $num_tel,
+                    'mot_de_passe' => $hashed_password
                 ];
                 header("Location: ../index.php");
                 exit();
