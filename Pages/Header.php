@@ -17,12 +17,12 @@
             <div class="relative flex h-16 items-center justify-between">
                 <div class="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
                     <div class="flex shrink-0 items-center">
-                        <img class="h-8 w-auto" src="https://tailwindui.com/plus/img/logos/mark.svg?color=indigo&shade=500" alt="Your Company">
+                        <img class="h-9 w-auto" src="https://cdn.discordapp.com/attachments/1307719934230528050/1315278423949574215/Untitled-1.png?ex=6756d3fc&is=6755827c&hm=0d7f8fca3b89078ecd476cc3a4a5ad7033d753482d2b31e803ffffe3e2a81562&" alt="logo">
                     </div>
                     <div class="hidden sm:ml-6 sm:block">
                         <div class="flex space-x-4">
                             <a href="/Hotel-Paie/index.php" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Accueil</a>
-                            <a href="/Hotel-Paie/Pages/Chambres.php" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Liste des Chambres</a>
+                            <a href="/Hotel-Paie/Pages/Chambres.php" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Nos Chambres</a>
                         </div>
                     </div>
                 </div>
