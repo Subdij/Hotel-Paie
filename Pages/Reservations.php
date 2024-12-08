@@ -75,8 +75,8 @@
                         <h4>Informations personnelles</h4>
                         <label>Prénom : <input type="text" name="prenom" value="<?= htmlspecialchars($user['prenom'] ?? '') ?>" required></label>
                         <label>Nom : <input type="text" name="nom" value="<?= htmlspecialchars($user['nom'] ?? '') ?>" required></label>
-                        <label>Email : <input type="email" name="email" value="<?= htmlspecialchars($user['email'] ?? '') ?>" required></label>
-                        <label>Téléphone : <input type="text" name="telephone" value="<?= htmlspecialchars($user['telephone'] ?? '') ?>" required></label>
+                        <label>Email : <input type="email" name="email" value="<?= htmlspecialchars($user['adresse_mail'] ?? '') ?>" required></label>
+                        <label>Téléphone : <input type="text" name="telephone" value="<?= htmlspecialchars($user['num_tel'] ?? '') ?>" required></label>
 
                         <h4>Détails du séjour</h4>
                         <label>Date d'arrivée : <input type="date" name="date_arrivee" value="<?= htmlspecialchars($_GET['checkin'] ?? '') ?>" required></label>
