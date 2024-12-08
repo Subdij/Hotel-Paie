@@ -62,7 +62,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body class="h-full">
 <div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
   <div class="sm:mx-auto sm:w-full sm:max-w-sm">
-    <img class="mx-auto h-10 w-auto" src="https://tailwindui.com/plus/img/logos/mark.svg?color=indigo&shade=600" alt="Your Company">
+    <a href="../index.php">
+      <img class="mx-auto h-20" src="https://cdn.discordapp.com/attachments/1307719934230528050/1315278423949574215/Untitled-1.png?ex=6756d3fc&is=6755827c&hm=0d7f8fca3b89078ecd476cc3a4a5ad7033d753482d2b31e803ffffe3e2a81562&" alt="logo" style="width: 40%;">
+    </a>
     <h2 class="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">Connexion</h2>
   </div>
 
@@ -101,7 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </form>
 
     <p class="mt-10 text-center text-sm/6 text-gray-500">
-      Tu n'a pas de compte inscriT toi ->
+      Tu n'a pas de compte inscris toi ->
       <a href="./Inscription.php" class="font-semibold text-indigo-600 hover:text-indigo-500">Inscription</a>
     </p>
   </div>

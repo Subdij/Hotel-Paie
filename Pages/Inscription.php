@@ -37,26 +37,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
 
         // Vérifier si l'utilisateur existe déjà
-        $sql = "SELECT * FROM client WHERE Nom = ? AND Prenom = ? AND adresse_mail = ? AND num_tél = ?";
+        $sql = "SELECT * FROM client WHERE adresse_mail = ?";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("ssss", $nom, $prenom, $email, $num_tel);
+        $stmt->bind_param("s", $email);
         $stmt->execute();
         $result = $stmt->get_result();
 
         if ($result->num_rows > 0) {
-            $errors['general'] = "Un compte avec ces informations existe déjà.";
+            $errors['general'] = "Un compte avec cette adresse mail existe déjà.";
         } else {
             $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
-            $sql = "INSERT INTO client (Nom, Prenom, adresse_mail, num_tél, mot_de_passe) VALUES (?, ?, ?, ?, ?)";
+            $sql = "INSERT INTO client (nom, prenom, adresse_mail, num_tel, mot_de_passe) VALUES (?, ?, ?, ?, ?)";
             $stmt = $conn->prepare($sql);
             $stmt->bind_param("sssss", $nom, $prenom, $email, $num_tel, $hashed_password);
             if ($stmt->execute()) {
                 $_SESSION['user'] = [
-                    'Nom' => $nom,
-                    'Prenom' => $prenom,
+                    'nom' => $nom,
+                    'prenom' => $prenom,
                     'adresse_mail' => $email,
-                    'num_tél' => $num_tel
+                    'num_tel' => $num_tel,
+                    'mot_de_passe' => $hashed_password
                 ];
                 header("Location: ../index.php");
                 exit();
@@ -82,7 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
   <div class="sm:mx-auto sm:w-full sm:max-w-sm">
     <a href="../index.php">
-      <img class="mx-auto h-10 w-auto" src="https://tailwindui.com/plus/img/logos/mark.svg?color=indigo&shade=600" alt="Your Company">
+      <img class="mx-auto h-12" src="https://cdn.discordapp.com/attachments/1307719934230528050/1315278423949574215/Untitled-1.png?ex=6756d3fc&is=6755827c&hm=0d7f8fca3b89078ecd476cc3a4a5ad7033d753482d2b31e803ffffe3e2a81562&" alt="Your Company" style="width: 40%;">
     </a>
     <h2 class="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900" style="font-size: 2rem;">Inscription</h2>
   </div>
