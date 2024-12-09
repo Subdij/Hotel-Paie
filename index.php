@@ -46,7 +46,7 @@
     </div>
     <div class="relative mx-auto max-w-2xl py-32 sm:py-30 lg:py-30">
       <div class="text-center">
-        <img src="https://cdn.discordapp.com/attachments/1307719934230528050/1315278423949574215/Untitled-1.png?ex=6756d3fc&is=6755827c&hm=0d7f8fca3b89078ecd476cc3a4a5ad7033d753482d2b31e803ffffe3e2a81562&" alt="Hotel Image" class="mx-auto mb-8 w-32 h-32 object-cover">
+        <img src="./Ressources/logo.png" alt="Hotel Image" class="mx-auto mb-8 w-32 h-32 object-cover">
         <h1 class="text-balance text-5xl font-semibold tracking-tight text-white sm:text-7xl">Bienvenue à</br> Hotel Paie</h1>
         <p class="mt-8 text-pretty text-lg font-medium text-gray-200 sm:text-xl/8">Profitez de nos offres exclusives et réservez votre séjour dès maintenant.</p>
         <div class="mt-10 flex items-center justify-center gap-x-6">
