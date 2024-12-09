@@ -93,7 +93,7 @@
         <!-- Rappel de la chambre -->
         <div class="room-details">
             <?php if ($chambre): ?>
-                <img src="../Ressources/chambre1.jpg" alt="Chambre">
+                <?php echo"<img src='" . htmlspecialchars($chambre['url_image']) . "' alt='Chambre'>"; ?>
                 <h2>Chambre #<?= htmlspecialchars($chambre['id_chambre']) ?></h2>
                 <p>Type : <?= htmlspecialchars($chambre['type_chambre']) ?></p>
                 <p>Description : <?= htmlspecialchars($chambre['description']) ?></p>
