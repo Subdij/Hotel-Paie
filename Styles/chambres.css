@@ -142,6 +142,41 @@
     font-size: 14px;
 }
 
+/* Bouton Réserver */
+
+.presentation-chambres .room form {
+    display: flex;
+    flex-direction: column; /* Organisation verticale des champs */
+    gap: 15px; /* Espacement entre les champs */
+}
+
+.presentation-chambres .room form label {
+    font-size: 16px;
+    color: #555;
+}
+
+.presentation-chambres .room form select,
+.presentation-chambres .room form button {
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.presentation-chambres .room form button {
+    background-color: #333; /* Bouton similaire à celui de la barre de recherche */
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.presentation-chambres .room form button:hover {
+    background-color: #555;
+}
+
+
+
 /* Message d'alerte pour les groupes */
 .alert-message {
     background-color: #fff3cd;
