@@ -1,34 +1,12 @@
 <?php
-// ...existing code...
-?>
 
-<h2>Réserver une chambre</h2>
-<form action="Reservations.php" method="post">
-    <label for="name">Nom:</label>
-    <input type="text" id="name" name="name" required><br><br>
-    <label for="prenom">Prénom:</label>
-    <input type="text" id="prenom" name="prenom" required><br><br>
-    <label for="num_tel">Numéro de téléphone:</label>
-    <input type="tel" id="num_tel" name="num_tel" pattern="[0-9]{10}" required><br><br>
-    <label for="adresse_mail">Adresse e-mail:</label>
-    <input type="email" id="adresse_mail" name="adresse_mail" required><br><br>
-    <label for="date_debut">Date de début:</label>
-    <input type="date" id="date_debut" name="date_debut" required><br><br>
-    <label for="date_fin">Date de fin:</label>
-    <input type="date" id="date_fin" name="date_fin" required><br><br>
-    <label for="options">Options:</label>
-    <input type="text" id="options" name="options"><br><br>
-    <input type="hidden" id="id_chambre" name="id_chambre" value="<?php echo $_GET['id_chambre']; ?>">
-    <input type="submit" value="Réserver">
-</form>
+    include '../Pages/Header.php';
 
-<?php
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Connexion à la base de données
     $servername = "localhost";
     $username = "root";
     $password = "";
-    $dbname = "HotelPaie";
+    $dbname = "hotel";
 
     // Créer la connexion
     $conn = new mysqli($servername, $username, $password, $dbname);
@@ -38,43 +16,102 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         die("Connection failed: " . $conn->connect_error);
     }
 
-    // Insertion des données de réservation
-    $name = $_POST['name'];
-    $prenom = $_POST['prenom'];
-    $num_tel = $_POST['num_tel'];
-    $adresse_mail = $_POST['adresse_mail'];
-    $date_debut = $_POST['date_debut'];
-    $date_fin = $_POST['date_fin'];
-    $options = $_POST['options'];
-    $id_chambre = $_POST['id_chambre'];
+    // Récupération de l'ID de la chambre sélectionnée via $_GET
+    $id_chambre = $_GET['id_chambre'] ?? null;
 
-    // Vérifier si la chambre existe
-    $chambre_check_sql = "SELECT * FROM Chambre WHERE ID_chambre = $id_chambre";
-    $chambre_check_result = $conn->query($chambre_check_sql);
-
-    if ($chambre_check_result->num_rows > 0) {
-        // Insertion des données du client
-        $client_sql = "INSERT INTO Client (Nom, Prenom, num_tel, adresse_mail) VALUES ('$name', '$prenom', '$num_tel', '$adresse_mail')";
-        if ($conn->query($client_sql) === TRUE) {
-            $client_id = $conn->insert_id;
-
-            // Insertion des données de réservation
-            $reservation_sql = "INSERT INTO Reservation (nombre_place, date_reservation, date_debut_sejour, date_fin_sejour, options, prix_total, ID_client, ID_chambre) VALUES (1, NOW(), '$date_debut', '$date_fin', '$options', 0, $client_id, $id_chambre)";
-            if ($conn->query($reservation_sql) === TRUE) {
-                $reservation_id = $conn->insert_id;
-                header("Location: Paiement.php?id_reservation=$reservation_id");
-                exit();
-            } else {
-                echo "Erreur: " . $reservation_sql . "<br>" . $conn->error;
-            }
-        } else {
-            echo "Erreur: " . $client_sql . "<br>" . $conn->error;
-        }
-    } else {
-        echo "Erreur: La chambre avec l'ID $id_chambre n'existe pas.";
+    // Récupération des informations de la chambre
+    $chambre = null;
+    if ($id_chambre) {
+        $sql = "SELECT * FROM chambre WHERE id_chambre = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("i", $id_chambre);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $chambre = $result->fetch_assoc();
+        $stmt->close();
     }
 
-    // Fermeture de la connexion
-    $conn->close();
-}
-?>
+    // Vérification si l'utilisateur est connecté
+    $user = $_SESSION['user'] ?? null;
+    ?>
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Réservation</title>
+    <link rel="stylesheet" href="../Styles/style.css">
+    <link rel="stylesheet" href="../Styles/reservation.css">
+</head>
+<body>
+    <section class="reservation-page">
+        <!-- Rappel de la chambre -->
+        <div class="room-details">
+            <?php if ($chambre): ?>
+                <img src="../Ressources/chambre.jpg" alt="Chambre">
+                <h2>Chambre #<?= htmlspecialchars($chambre['id_chambre']) ?></h2>
+                <p>Type : <?= htmlspecialchars($chambre['type_chambre']) ?></p>
+                <p>Description : <?= htmlspecialchars($chambre['description']) ?></p>
+                <p>Capacité maximale : <?= htmlspecialchars($chambre['capacite_max']) ?> personnes</p>
+                <p>Prix : <?= htmlspecialchars($chambre['prix_par_nuit']) ?> € par nuit</p>
+            <?php else: ?>
+                <p>Erreur : Aucune chambre sélectionnée.</p>
+            <?php endif; ?>
+        </div>
+
+        <!-- Section formulaire et récapitulatif -->
+        <div class="reservation-container">
+            <!-- Colonne de gauche : Formulaire -->
+            <div class="reservation-form">
+                <h3>Formulaire de réservation</h3>
+                <?php if (!$user): ?>
+                    <p>Veuillez vous connecter pour continuer votre réservation.</p>
+                    <a href="../Pages/Connexion.php" class="button">Se connecter</a>
+                <?php else: ?>
+                    <form action="confirmer_reservation.php" method="post">
+                        <input type="hidden" name="id_chambre" value="<?= htmlspecialchars($id_chambre) ?>">
+                        
+                        <h4>Informations personnelles</h4>
+                        <label>Prénom : <input type="text" name="prenom" value="<?= htmlspecialchars($user['prenom'] ?? '') ?>" required></label>
+                        <label>Nom : <input type="text" name="nom" value="<?= htmlspecialchars($user['nom'] ?? '') ?>" required></label>
+                        <label>Email : <input type="email" name="email" value="<?= htmlspecialchars($user['adresse_mail'] ?? '') ?>" required></label>
+                        <label>Téléphone : <input type="text" name="telephone" value="<?= htmlspecialchars($user['num_tel'] ?? '') ?>" required></label>
+
+                        <h4>Détails du séjour</h4>
+                        <label>Date d'arrivée : <input type="date" name="date_arrivee" value="<?= htmlspecialchars($_GET['checkin'] ?? '') ?>" required></label>
+                        <label>Date de départ : <input type="date" name="date_depart" value="<?= htmlspecialchars($_GET['checkout'] ?? '') ?>" required></label>
+                        <label>Nombre de voyageurs : <input type="number" name="voyageurs" min="1" value="<?= htmlspecialchars($_GET['guests'] ?? 1) ?>" required></label>
+
+                        <h4>Options</h4>
+                        <label><input type="checkbox" name="options[]" value="petit_dejeuner"> Petit-déjeuner (+10€)</label>
+                        <label><input type="checkbox" name="options[]" value="parking"> Parking (+5€)</label>
+                        <label><input type="checkbox" name="options[]" value="spa"> Spa (+20€)</label>
+
+                        <button type="submit">Confirmer</button>
+                    </form>
+                <?php endif; ?>
+            </div>
+
+            <!-- Colonne de droite : Récapitulatif -->
+            <div class="summary">
+                <h3>Récapitulatif de la commande</h3>
+                <?php if ($chambre): ?>
+                    <p>Prix par nuit : <?= htmlspecialchars($chambre['prix_par_nuit']) ?> €</p>
+                    <?php 
+                        $nights = (isset($_GET['checkin'], $_GET['checkout'])) 
+                            ? (strtotime($_GET['checkout']) - strtotime($_GET['checkin'])) / 86400 
+                            : 0;
+                        $total = $nights * $chambre['prix_par_nuit'];
+                    ?>
+                    <p>Nombre de nuits : <?= $nights ?></p>
+                    <p>Total chambre : <?= $total ?> €</p>
+                    <p>Frais de séjour : 5 €</p>
+                    <p>Total final : <?= $total + 5 ?> € (dont TVA)</p>
+                    <button type="submit" form="reservation-form">Confirmer</button>
+                <?php endif; ?>
+            </div>
+        </div>
+    </section>
+</body>
+</html>
