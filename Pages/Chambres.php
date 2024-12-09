@@ -124,7 +124,7 @@
                 $sql .= "
                     AND id_chambre NOT IN (
                         SELECT id_chambre
-                        FROM réservation
+                        FROM reservation
                         WHERE (date_debut_sejour < '$checkout' AND date_fin_sejour > '$checkin')
                     )
                 ";
@@ -163,11 +163,23 @@
                 // Affichage des chambres disponibles
                 while ($row = $result->fetch_assoc()) {
                     echo "<div class='room'>";
-                    echo "<img src='" . $row['url_image'] . "' alt='Chambre'>";
-                    echo "<h2>Chambre " . $row['type_chambre'] . "</h2>";
-                    echo "<p>". $row['description'] . "</p>";
-                    echo "<p>Prix : " . $row['prix_par_nuit'] . " € par nuit</p>";
-                    echo "<p>Capacité maximale : " . $row['capacite_max'] . " personnes</p>";
+                    echo "<img src='" . htmlspecialchars($row['url_image']) . "' alt='Chambre'>";
+                    echo "<h2>Chambre " . htmlspecialchars($row['type_chambre']) . "</h2>";
+                    echo "<p>". htmlspecialchars($row['description']) . "</p>";
+                    echo "<p>Prix : " . htmlspecialchars($row['prix_par_nuit']) . " € par nuit</p>";
+                    echo "<p>Capacité maximale : " . htmlspecialchars($row['capacite_max']) . " personnes</p>";
+                    echo "<form action='Reservations.php' method='GET'>";
+                    echo "<input type='hidden' name='id_chambre' value='" . htmlspecialchars($row['id_chambre']) . "'>";
+                    echo "<input type='hidden' name='url_image' value='" . htmlspecialchars($row['url_image']) . "'>";
+                    echo "<input type='hidden' name='type_chambre' value='" . htmlspecialchars($row['type_chambre']) . "'>";
+                    echo "<input type='hidden' name='description' value='" . htmlspecialchars($row['description']) . "'>";
+                    echo "<input type='hidden' name='prix_par_nuit' value='" . htmlspecialchars($row['prix_par_nuit']) . "'>";
+                    echo "<input type='hidden' name='capacite_max' value='" . htmlspecialchars($row['capacite_max']) . "'>";
+                    echo "<input type='hidden' name='checkin' value='" . htmlspecialchars($checkin) . "'>";
+                    echo "<input type='hidden' name='checkout' value='" . htmlspecialchars($checkout) . "'>";
+                    echo "<input type='hidden' name='guests' value='" . htmlspecialchars($guests) . "'>";
+                    echo "<button type='submit'>Réserver</button>";
+                    echo "</form>";
                     echo "</div>";
                 }
             } else {
