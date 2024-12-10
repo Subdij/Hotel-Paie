@@ -128,9 +128,9 @@ $conn->close();
                         <label>Téléphone : <input type="text" name="telephone" value="<?= htmlspecialchars($user['num_tel'] ?? '') ?>" required></label>
 
                         <h4>Détails du séjour</h4>
-                        <label>Date d'arrivée : <input type="date" name="date_arrivee" value="<?= htmlspecialchars($_POST['date_arrivee'] ?? '') ?>" required></label>
-                        <label>Date de départ : <input type="date" name="date_depart" value="<?= htmlspecialchars($_POST['date_depart'] ?? '') ?>" required></label>
-                        <label>Nombre de voyageurs : <input type="number" name="voyageurs" min="1" value="<?= htmlspecialchars($_POST['voyageurs'] ?? 1) ?>" required></label>
+                        <label>Date d'arrivée : <input type="date" name="date_arrivee" value="<?= htmlspecialchars($_POST['checkin'] ?? '') ?>" required></label>
+                        <label>Date de départ : <input type="date" name="date_depart" value="<?= htmlspecialchars($_POST['checkout'] ?? '') ?>" required></label>
+                        <label>Nombre de voyageurs : <input type="number" name="voyageurs" min="1" value="<?= htmlspecialchars($_POST['guests'] ?? 1) ?>" required></label>
 
                         <h4>Options</h4>
                         <label><input type="checkbox" name="options[]" value="petit_dejeuner" <?= isset($_POST['options']) && in_array('petit_dejeuner', $_POST['options']) ? 'checked' : '' ?>> Petit déjeuner (+10€/personne/nuit)</label>
