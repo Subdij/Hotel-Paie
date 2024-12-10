@@ -98,12 +98,12 @@ $conn->close();
         <!-- Rappel de la chambre -->
         <div class="room-details">
             <?php if ($chambre): ?>
+                <h1> Chambre sélectionnée </h1>
                 <?php echo"<img src='" . htmlspecialchars($chambre['url_image']) . "' alt='Chambre'>"; ?>
-                <h2>Chambre #<?= htmlspecialchars($chambre['id_chambre']) ?></h2>
-                <p>Type : <?= htmlspecialchars($chambre['type_chambre']) ?></p>
-                <p>Description : <?= htmlspecialchars($chambre['description']) ?></p>
-                <p>Capacité maximale : <?= htmlspecialchars($chambre['capacite_max']) ?> personnes</p>
-                <p>Prix : <?= htmlspecialchars($chambre['prix_par_nuit']) ?> € par nuit</p>
+                <h2>Chambre <?= htmlspecialchars($chambre['type_chambre']) ?></h2>
+                <p><?= htmlspecialchars($chambre['description']) ?></p>
+                <p><u>Capacité maximale:</u> <?= htmlspecialchars($chambre['capacite_max']) ?> personne(s)</p>
+                <p2><?= htmlspecialchars($chambre['prix_par_nuit']) ?> € /nuit</p2>
             <?php else: ?>
                 <p>Erreur : Aucune chambre sélectionnée.</p>
             <?php endif; ?>
