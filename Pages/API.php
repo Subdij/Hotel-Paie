@@ -30,9 +30,14 @@ function edit_client($id_client) {
     return $editClient;
 }
 
-function update_client($id_client, $nom, $prenom, $num_tel, $adresse_mail) {
+function update_client($id_client, $nom, $prenom, $num_tel, $adresse_mail, $mot_de_passe = null) {
     $conn = connect_db();
-    $sql = "UPDATE client SET nom='$nom', prenom='$prenom', num_tel='$num_tel', adresse_mail='$adresse_mail' WHERE id_client='$id_client'";
+    $sql = "UPDATE client SET nom='$nom', prenom='$prenom', num_tel='$num_tel', adresse_mail='$adresse_mail'";
+    if ($mot_de_passe) {
+        $mot_de_passe = password_hash($mot_de_passe, PASSWORD_BCRYPT);
+        $sql .= ", mot_de_passe='$mot_de_passe'";
+    }
+    $sql .= " WHERE id_client='$id_client'";
     $conn->query($sql);
     $conn->close();
 }
@@ -197,7 +202,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $editClient = edit_client($_POST['id_client']);
 
     } elseif (isset($_POST['update'])) {
-        update_client($_POST['id_client'], $_POST['nom'], $_POST['prenom'], $_POST['num_tel'], $_POST['adresse_mail']);
+        update_client($_POST['id_client'], $_POST['nom'], $_POST['prenom'], $_POST['num_tel'], $_POST['adresse_mail'], $_POST['mot_de_passe']);
 
     } elseif (isset($_POST['add'])) {
         add_client($_POST['nom'], $_POST['prenom'], $_POST['num_tel'], $_POST['adresse_mail'], $_POST['mot_de_passe']);
