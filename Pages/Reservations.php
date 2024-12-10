@@ -121,22 +121,23 @@ $conn->close();
                     <form method="post">
                         <input type="hidden" name="id_chambre" value="<?= htmlspecialchars($id_chambre) ?>">
                         
-                        <h4>Informations personnelles</h4>
+                        <h4>1 - Informations personnelles</h4>
                         <label>Prénom : <input type="text" name="prenom" value="<?= htmlspecialchars($user['prenom'] ?? '') ?>" required></label>
                         <label>Nom : <input type="text" name="nom" value="<?= htmlspecialchars($user['nom'] ?? '') ?>" required></label>
                         <label>Email : <input type="email" name="email" value="<?= htmlspecialchars($user['adresse_mail'] ?? '') ?>" required></label>
                         <label>Téléphone : <input type="text" name="telephone" value="<?= htmlspecialchars($user['num_tel'] ?? '') ?>" required></label>
 
-                        <h4>Détails du séjour</h4>
-                        <label>Date d'arrivée : <input type="date" name="date_arrivee" value="<?= htmlspecialchars($_POST['checkin'] ?? '') ?>" required></label>
+                        <h4>2 - Détails du séjour</h4>
+                        <label>Date d'arrivée : <input type="date" name="date_arrivee" value="<?= htmlspecialchars($_POST['checkin'] ?? '') ?>" min="' . date('Y-m-d') . '" required></label>
                         <label>Date de départ : <input type="date" name="date_depart" value="<?= htmlspecialchars($_POST['checkout'] ?? '') ?>" required></label>
                         <label>Nombre de voyageurs : <input type="number" name="voyageurs" min="1" value="<?= htmlspecialchars($_POST['guests'] ?? 1) ?>" required></label>
 
-                        <h4>Options</h4>
-                        <label><input type="checkbox" name="options[]" value="petit_dejeuner" <?= isset($_POST['options']) && in_array('petit_dejeuner', $_POST['options']) ? 'checked' : '' ?>> Petit déjeuner (+10€/personne/nuit)</label>
-                        <label><input type="checkbox" name="options[]" value="parking" <?= isset($_POST['options']) && in_array('parking', $_POST['options']) ? 'checked' : '' ?>> Parking (+15€)</label>
-                        <label><input type="checkbox" name="options[]" value="spa" <?= isset($_POST['options']) && in_array('spa', $_POST['options']) ? 'checked' : '' ?>> Spa (+20€/personne/nuit)</label>
-
+                        <h4>3 - Options</h4>
+                        <div class="options">
+                            <label><input type="checkbox" name="options[]" value="petit_dejeuner" <?= isset($_POST['options']) && in_array('petit_dejeuner', $_POST['options']) ? 'checked' : '' ?>> Petit déjeuner (+10€/personne/nuit)</label>
+                            <label><input type="checkbox" name="options[]" value="parking" <?= isset($_POST['options']) && in_array('parking', $_POST['options']) ? 'checked' : '' ?>> Parking (+15€)</label>
+                            <label><input type="checkbox" name="options[]" value="spa" <?= isset($_POST['options']) && in_array('spa', $_POST['options']) ? 'checked' : '' ?>> Spa (+20€/personne/nuit)</label>
+                        </div>
                         <input type="hidden" name="prix_total" id="prix_total">
                         <button type="button" id="confirm-button-left">Confirmer</button>
                     </form>
@@ -207,7 +208,7 @@ $conn->close();
                 // Calcul des coûts
                 const totalChambre = nbNuits * prixParNuit;
                 let totalOptions = 0;
-                let optionsHTML = "<h4>Options :</h4>";
+                let optionsHTML = "<h4>Options:</h4>";
 
                 formInputs.options.forEach(option => {
                     if (option.checked) {
@@ -218,14 +219,14 @@ $conn->close();
                                 : optionPrix * nbNuits;
 
                         totalOptions += optionTotal;
-                        optionsHTML += `<p>${option.value.replace("_", " ")} : ${optionTotal.toFixed(2)} €</p>`;   
+                        optionsHTML += `<p>• ${option.value.replace("_", " ")}: <i>${optionTotal.toFixed(2)} €</i></p>`;   
                     }
                 });
 
                 if (totalOptions === 0) {
                     optionsHTML += "<p>Aucune option sélectionnée.</p>";
                 } else {
-                    optionsHTML += `<p>Total options : ${totalOptions} €</p>`;
+                    optionsHTML += `<p3><strong>Total options: </strong><i>${totalOptions} €</i></p3></br></br>`;
                 }
 
                 const fraisSejour = fraisSejourParNuit * nbNuits;
@@ -234,13 +235,14 @@ $conn->close();
                 // Mise à jour du récapitulatif
                 summaryContainer.innerHTML = `
                     <h3>Récapitulatif de la commande</h3>
-                    <p>Prix par nuit : ${prixParNuit.toFixed(2)} €</p>
-                    <p>Nombre de nuits : ${nbNuits}</p>
-                    <p>Prix total chambre : ${totalChambre.toFixed(2)} €</p>
+                    <h6>Chambre:</h6>
+                    <p>• Prix par nuit: <i>${prixParNuit.toFixed(2)} €</i></p>
+                    <p>• Nombre de nuits: ${nbNuits}</p>
+                    <p3><strong>Prix total chambre:</strong> <i>${totalChambre.toFixed(2)} €</i></p3>
                     ${optionsHTML}
-                    <p>Frais de séjour : ${fraisSejour.toFixed(2)} €</p>
-                    <p><strong>Total final : ${totalFinal.toFixed(2)} €</strong></p>
-                    <p><em>Dont TVA : ${(totalFinal * 0.1).toFixed(2)} €</em></p>
+                    <p4><strong>Frais de séjour: </strong><i>${fraisSejour.toFixed(2)} €</i></p4>
+                    <p><strong id='de_corpulence_grosse_blue'>Total final: ${totalFinal.toFixed(2)} €</strong></p>
+                    <p><em>Dont TVA: ${(totalFinal * 0.1).toFixed(2)} €</em></p>
                 `;
 
                 // Update the hidden input with the calculated total price
