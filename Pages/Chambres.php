@@ -39,10 +39,9 @@
             <label for="guests">Nombre de voyageurs :</label>
             <input type="number" id="guests" name="guests" value="<?= isset($_GET['guests']) ? htmlspecialchars($_GET['guests']) : '' ?>" min="1" value="1" required>
 
-            <div class="search-buttons">
-                <button type="submit">Rechercher</button>
-                <button type="button" onclick="window.location.href='chambres.php';">Clear</button>
-            </div>
+            <button type="submit">Rechercher</button>
+            <button type="button" onclick="window.location.href='chambres.php';">Effacer</button>
+
         </form>
         <script>
         document.addEventListener("DOMContentLoaded", function () {
@@ -80,13 +79,13 @@
             <h3>Filtres</h3>
             <form method="GET" action="chambres.php">
                 <!-- Réutilisation des critères de recherche -->
-                <label for="tri">Trier par :</label>
+                <label for="tri"><u>Trier par:</u> </label>
                 <select name="tri" id="tri">
                     <option value="prix_asc" <?= isset($_GET['tri']) && $_GET['tri'] === 'prix_asc' ? 'selected' : '' ?>>Prix croissant</option>
                     <option value="prix_desc" <?= isset($_GET['tri']) && $_GET['tri'] === 'prix_desc' ? 'selected' : '' ?>>Prix décroissant</option>
                 </select>
 
-                <label for="type_chambre">Type de chambre :</label>
+                <label for="type_chambre"><u>Type de chambre:</u> </label>
                 <select name="type_chambre" id="type_chambre">
                     <option value="">Tous</option>
                     <option value="simple" <?= isset($_GET['type_chambre']) && $_GET['type_chambre'] === 'simple' ? 'selected' : '' ?>>Simple</option>
@@ -165,9 +164,9 @@
                     echo "<div class='room'>";
                     echo "<img src='" . htmlspecialchars($row['url_image']) . "' alt='Chambre'>";
                     echo "<h2>Chambre " . htmlspecialchars($row['type_chambre']) . "</h2>";
-                    echo "<p>". htmlspecialchars($row['description']) . "</p>";
-                    echo "<p>Prix : " . htmlspecialchars($row['prix_par_nuit']) . " € par nuit</p>";
-                    echo "<p>Capacité maximale : " . htmlspecialchars($row['capacite_max']) . " personnes</p>";
+                    echo "<p1>". htmlspecialchars($row['description']) . "</p>";
+                    echo "<p2><u>Prix:</u> " . htmlspecialchars($row['prix_par_nuit']) . " € par nuit</p>";
+                    echo "<p3><u>Capacité maximale:</u> " . htmlspecialchars($row['capacite_max']) . " personnes</p>";
                     echo "<form action='Reservations.php' method='GET'>";
                     echo "<input type='hidden' name='id_chambre' value='" . htmlspecialchars($row['id_chambre']) . "'>";
                     echo "<input type='hidden' name='url_image' value='" . htmlspecialchars($row['url_image']) . "'>";
