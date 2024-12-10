@@ -175,7 +175,8 @@ ALTER TABLE `paiement`
 --
 ALTER TABLE `reservation`
   ADD PRIMARY KEY (`id_reservation`),
-  ADD KEY `id_client` (`id_client`);
+  ADD KEY `id_client` (`id_client`),
+  ADD KEY `id_chambre` (`id_chambre`);
 
 --
 -- AUTO_INCREMENT pour les tables déchargées
@@ -244,7 +245,8 @@ ALTER TABLE `paiement`
 -- Contraintes pour la table `reservation`
 --
 ALTER TABLE `reservation`
-  ADD CONSTRAINT `reservation_ibfk_1` FOREIGN KEY (`id_client`) REFERENCES `client` (`id_client`) ON DELETE CASCADE;
+  ADD CONSTRAINT `reservation_ibfk_1` FOREIGN KEY (`id_client`) REFERENCES `client` (`id_client`) ON DELETE CASCADE,
+  ADD CONSTRAINT `reservation_ibfk_2` FOREIGN KEY (`id_chambre`) REFERENCES `chambre` (`id_chambre`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

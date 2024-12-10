@@ -1,4 +1,7 @@
 <?php
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
 
 function connect_db() {
     $conn = new mysqli("localhost", "root", "", "hotel");
@@ -11,11 +14,7 @@ function connect_db() {
 function delete_client($id_client) {
     $conn = connect_db();
     $sql = "DELETE FROM client WHERE id_client='$id_client'";
-    if ($conn->query($sql) === TRUE) {
-        echo "Client deleted successfully";
-    } else {
-        echo "Error deleting client: " . $conn->error;
-    }
+    $conn->query($sql);
     $conn->close();
 }
 
@@ -34,11 +33,7 @@ function edit_client($id_client) {
 function update_client($id_client, $nom, $prenom, $num_tel, $adresse_mail) {
     $conn = connect_db();
     $sql = "UPDATE client SET nom='$nom', prenom='$prenom', num_tel='$num_tel', adresse_mail='$adresse_mail' WHERE id_client='$id_client'";
-    if ($conn->query($sql) === TRUE) {
-        echo "Client updated successfully";
-    } else {
-        echo "Error updating client: " . $conn->error;
-    }
+    $conn->query($sql);
     $conn->close();
 }
 
@@ -46,11 +41,7 @@ function add_client($nom, $prenom, $num_tel, $adresse_mail, $mot_de_passe) {
     $conn = connect_db();
     $mot_de_passe = password_hash($mot_de_passe, PASSWORD_BCRYPT);
     $sql = "INSERT INTO client (nom, prenom, num_tel, adresse_mail, mot_de_passe) VALUES ('$nom', '$prenom', '$num_tel', '$adresse_mail', '$mot_de_passe')";
-    if ($conn->query($sql) === TRUE) {
-        echo "Client added successfully";
-    } else {
-        echo "Error adding client: " . $conn->error;
-    }
+    $conn->query($sql);
     $conn->close();
     header("Location: " . $_SERVER['PHP_SELF']);
     exit();
@@ -59,11 +50,7 @@ function add_client($nom, $prenom, $num_tel, $adresse_mail, $mot_de_passe) {
 function cancel_reservation($id_reservation) {
     $conn = connect_db();
     $sql = "DELETE FROM reservation WHERE id_reservation='$id_reservation'";
-    if ($conn->query($sql) === TRUE) {
-        echo "Reservation cancelled successfully";
-    } else {
-        echo "Error cancelling reservation: " . $conn->error;
-    }
+    $conn->query($sql);
     $conn->close();
 }
 
@@ -81,12 +68,91 @@ function edit_reservation($id_reservation) {
 
 function update_reservation($id_reservation, $nombre_voyageurs, $date_reservation, $date_debut_sejour, $date_fin_sejour, $options, $prix_total) {
     $conn = connect_db();
+    $options = json_encode($options);
+
+    $prix_total = calculate_total_price($nombre_voyageurs, $date_debut_sejour, $date_fin_sejour, json_decode($options, true));
+
     $sql = "UPDATE reservation SET nombre_voyageurs='$nombre_voyageurs', date_reservation='$date_reservation', date_debut_sejour='$date_debut_sejour', date_fin_sejour='$date_fin_sejour', options='$options', prix_total='$prix_total' WHERE id_reservation='$id_reservation'";
-    if ($conn->query($sql) === TRUE) {
-        echo "Reservation updated successfully";
-    } else {
-        echo "Error updating reservation: " . $conn->error;
+    $conn->query($sql);
+    $conn->close();
+}
+
+function calculate_total_price($nombre_voyageurs, $date_debut_sejour, $date_fin_sejour, $options) {
+    $prixParNuit = 100; // Example price per night, replace with actual value
+    $tarifsOptions = [
+        'petit_dejeuner' => 10,
+        'parking' => 15,
+        'spa' => 20
+    ];
+    $fraisSejourParNuit = 6;
+
+    $nbNuits = (strtotime($date_fin_sejour) - strtotime($date_debut_sejour)) / (60 * 60 * 24);
+    $totalChambre = $nbNuits * $prixParNuit;
+    $totalOptions = 0;
+
+    if (is_array($options)) {
+        foreach ($options as $option) {
+            $optionPrix = $tarifsOptions[$option] ?? 0;
+            $optionTotal = in_array($option, ['petit_dejeuner', 'spa']) ? $optionPrix * $nbNuits * $nombre_voyageurs : $optionPrix * $nbNuits;
+            $totalOptions += $optionTotal;
+        }
     }
+
+    $fraisSejour = $fraisSejourParNuit * $nbNuits;
+    return $totalChambre + $totalOptions + $fraisSejour;
+}
+
+function create_reservation($data) {
+    $conn = connect_db();
+    $user = $_SESSION['user'] ?? null;
+
+    if (!$user) {
+        $conn->close();
+        return;
+    }
+
+    // Debugging information
+    error_log("Received data: " . print_r($data, true));
+
+    if (isset($data['options'], $data['checkin'], $data['checkout'], $data['guests'])) {
+        $options = $data['options'];
+        $date_debut_sejour = $data['checkin'];
+        $date_fin_sejour = $data['checkout'];
+        $nombre_voyageurs = (int)$data['guests'];
+    } else {
+        $conn->close();
+        return;
+    }
+
+    $date_reservation = date('Y-m-d H:i:s');
+    $id_client = $user['id_client'];
+    $id_chambre = $_GET['id_chambre'];
+
+    // Calculate the total price
+    $prix_total = calculate_total_price($nombre_voyageurs, $date_debut_sejour, $date_fin_sejour, $options);
+
+    // Debugging information
+    error_log("Creating reservation with data: " . print_r($data, true));
+    error_log("User ID: " . $id_client);
+    error_log("Room ID: " . $id_chambre);
+
+    $sql = "INSERT INTO reservation (nombre_voyageurs, date_reservation, date_debut_sejour, date_fin_sejour, options, prix_total, id_client, id_chambre) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param(
+        "issssdii", 
+        $nombre_voyageurs, 
+        $date_reservation, 
+        $date_debut_sejour, 
+        $date_fin_sejour, 
+        json_encode($options), 
+        $prix_total, 
+        $id_client, 
+        $id_chambre
+    );
+
+    $stmt->execute();
+    $stmt->close();
     $conn->close();
 }
 
@@ -94,6 +160,8 @@ $editClient = null;
 $editReservation = null;
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $input = json_decode(file_get_contents('php://input'), true);
+
     if (isset($_POST['delete'])) {
         delete_client($_POST['id_client']);
         
@@ -114,6 +182,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     } elseif (isset($_POST['update_reservation'])) {
         update_reservation($_POST['id_reservation'], $_POST['nombre_voyageurs'], $_POST['date_reservation'], $_POST['date_debut_sejour'], $_POST['date_fin_sejour'], $_POST['options'], $_POST['prix_total']);
+    
+    } elseif (isset($input['options'])) {
+        create_reservation($input);
     }
 }
 ?>

@@ -19,7 +19,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } elseif (isset($_POST['edit_reservation'])) {
         $editReservation = edit_reservation($_POST['id_reservation']);
     } elseif (isset($_POST['update_reservation'])) {
-        update_reservation($_POST['id_reservation'], $_POST['nombre_voyageurs'], $_POST['date_reservation'], $_POST['date_debut_sejour'], $_POST['date_fin_sejour'], $_POST['options'], $_POST['prix_total']);
+        $options = isset($_POST['options']) ? $_POST['options'] : [];
+        update_reservation($_POST['id_reservation'], $_POST['nombre_voyageurs'], $_POST['date_reservation'], $_POST['date_debut_sejour'], $_POST['date_fin_sejour'], $options, $_POST['prix_total']);
     }
 }
 ?>
@@ -53,6 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             border: 1px solid #888;
             width: 80%;
             max-width: 600px;
+            border-radius: 8px;
         }
         .close {
             color: #aaa;
@@ -71,15 +73,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body class="h-full">
     <?php include 'Header.php'; ?>
     <div class="min-h-full">
-        <header class="bg-white shadow">
-            <div class="mx-auto max-w-full px-4 py-6 sm:px-6 lg:px-8">
+        <header class="bg-white shadow mt-16">
+            <div class="mx-auto max-w-full px-4 py-6 sm:px-6 lg:px-8 text-center">
                 <h1 class="text-3xl font-bold tracking-tight text-gray-900">Dashboard</h1>
             </div>
         </header>
         <main>
             <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-                <h2 class="text-2xl font-bold tracking-tight text-gray-900">Clients</h2>
-                <button onclick="openModal('addClientModal')" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Ajouter Client</button>
+                <div class="flex justify-between items-center">
+                    <h2 class="text-2xl font-bold tracking-tight text-gray-900">Clients</h2>
+                    <button onclick="openModal('addClientModal')" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mx-auto block my-4 mb-6">Ajouter Client</button>
+                </div>
                 <div id="addClientModal" class="modal">
                     <div class="modal-content">
                         <span class="close" onclick="closeModal('addClientModal')">&times;</span>
@@ -204,7 +208,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         </form>
                     </div>
                 </div>
-                <h2 class="text-2xl font-bold tracking-tight text-gray-900 mt-8">Reservations</h2>
+                <h2 class="text-2xl font-bold tracking-tight text-gray-900 mt-8 mb-4">Reservations</h2>
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
@@ -248,7 +252,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 echo "</tr>";
                             }
                         } else {
-                            echo "<tr><td colspan='10' class='px-6 py-4 whitespace-nowrap'>No reservations found</td></tr>";
+                            echo "<tr><td colspan='10' class='px-6 py-4 whitespace-nowrap'>Pas de réservation trouvée</td></tr>";
                         }
                         $conn->close();
                         ?>
@@ -291,7 +295,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 <div class="flex-1">
                                     <label for="edit_options" class="block text-sm/6 font-medium text-gray-900">Options</label>
                                     <div class="mt-2">
-                                        <input id="edit_options" name="options" type="text" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6">
+                                        <label><input type="checkbox" id="edit_option_petit_dejeuner" name="options[]" value="petit_dejeuner"> Petit déjeuner (+10€/personne/nuit)</label>
+                                        <label><input type="checkbox" id="edit_option_parking" name="options[]" value="parking"> Parking (+15€)</label>
+                                        <label><input type="checkbox" id="edit_option_spa" name="options[]" value="spa"> Spa (+20€/personne/nuit)</label>
                                     </div>
                                 </div>
                                 <div class="flex-1">
@@ -341,8 +347,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             document.getElementById('edit_date_reservation').value = reservation.date_reservation;
             document.getElementById('edit_date_debut_sejour').value = reservation.date_debut_sejour;
             document.getElementById('edit_date_fin_sejour').value = reservation.date_fin_sejour;
-            document.getElementById('edit_options').value = reservation.options;
             document.getElementById('edit_prix_total').value = reservation.prix_total;
+
+            // Set options checkboxes
+            const options = JSON.parse(reservation.options);
+            document.getElementById('edit_option_petit_dejeuner').checked = options.includes('petit_dejeuner');
+            document.getElementById('edit_option_parking').checked = options.includes('parking');
+            document.getElementById('edit_option_spa').checked = options.includes('spa');
+
             openModal('editReservationModal');
         }
     </script>

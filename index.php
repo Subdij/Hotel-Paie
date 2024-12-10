@@ -34,7 +34,7 @@
     }
 
     // Fetch room details
-    $sql = "SELECT type_chambre, prix_par_nuit, url_image FROM chambre GROUP BY type_chambre LIMIT 3";
+    $sql = "SELECT type_chambre, prix_par_nuit, REPLACE(url_image, '../Ressources/', './Ressources/') as url_image FROM chambre GROUP BY type_chambre LIMIT 3";
     $result = $conn->query($sql);
     ?>
 
