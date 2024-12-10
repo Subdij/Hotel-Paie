@@ -54,6 +54,15 @@ function cancel_reservation($id_reservation) {
     $conn->close();
 }
 
+function confirm_cancel_reservation($id_reservation) {
+    $conn = connect_db();
+    $sql = "DELETE FROM reservation WHERE id_reservation='$id_reservation'";
+    $conn->query($sql);
+    $sql = "DELETE FROM annulation WHERE id_reservation='$id_reservation'";
+    $conn->query($sql);
+    $conn->close();
+}
+
 function edit_reservation($id_reservation) {
     $conn = connect_db();
     $sql = "SELECT * FROM reservation WHERE id_reservation='$id_reservation'";
@@ -70,15 +79,24 @@ function update_reservation($id_reservation, $nombre_voyageurs, $date_reservatio
     $conn = connect_db();
     $options = json_encode($options);
 
-    $prix_total = calculate_total_price($nombre_voyageurs, $date_debut_sejour, $date_fin_sejour, json_decode($options, true));
+    // Fetch the price per night for the room
+    $sql = "SELECT prix_par_nuit FROM chambre WHERE id_chambre = (SELECT id_chambre FROM reservation WHERE id_reservation = ?)";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $id_reservation);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
+    $prixParNuit = $row['prix_par_nuit'];
+    $stmt->close();
+
+    $prix_total = calculate_total_price($nombre_voyageurs, $date_debut_sejour, $date_fin_sejour, json_decode($options, true), $prixParNuit);
 
     $sql = "UPDATE reservation SET nombre_voyageurs='$nombre_voyageurs', date_reservation='$date_reservation', date_debut_sejour='$date_debut_sejour', date_fin_sejour='$date_fin_sejour', options='$options', prix_total='$prix_total' WHERE id_reservation='$id_reservation'";
     $conn->query($sql);
     $conn->close();
 }
 
-function calculate_total_price($nombre_voyageurs, $date_debut_sejour, $date_fin_sejour, $options) {
-    $prixParNuit = 100; // Example price per night, replace with actual value
+function calculate_total_price($nombre_voyageurs, $date_debut_sejour, $date_fin_sejour, $options, $prixParNuit) {
     $tarifsOptions = [
         'petit_dejeuner' => 10,
         'parking' => 15,
@@ -128,8 +146,18 @@ function create_reservation($data) {
     $id_client = $user['id_client'];
     $id_chambre = $_GET['id_chambre'];
 
+    // Fetch the price per night for the room
+    $sql = "SELECT prix_par_nuit FROM chambre WHERE id_chambre = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $id_chambre);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
+    $prixParNuit = $row['prix_par_nuit'];
+    $stmt->close();
+
     // Calculate the total price
-    $prix_total = calculate_total_price($nombre_voyageurs, $date_debut_sejour, $date_fin_sejour, $options);
+    $prix_total = calculate_total_price($nombre_voyageurs, $date_debut_sejour, $date_fin_sejour, $options, $prixParNuit);
 
     // Debugging information
     error_log("Creating reservation with data: " . print_r($data, true));
@@ -176,6 +204,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     } elseif (isset($_POST['cancel'])) {
         cancel_reservation($_POST['id_reservation']);
+
+    } elseif (isset($_POST['confirm_cancel'])) {
+        confirm_cancel_reservation($_POST['id_reservation']);
 
     } elseif (isset($_POST['edit_reservation'])) {
         $editReservation = edit_reservation($_POST['id_reservation']);

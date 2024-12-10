@@ -144,7 +144,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         if ($conn->connect_error) {
                             die("Connection failed: " . $conn->connect_error);
                         }
-                        $sql = "SELECT * FROM client";
+                        $sql = "SELECT * FROM client WHERE id_client > 0";
                         $result = $conn->query($sql);
                         if ($result->num_rows > 0) {
                             while($row = $result->fetch_assoc()) {
@@ -214,6 +214,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <tr>
                             <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nom</th>
                             <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Prenom</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type de Chambre</th>
                             <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre Voyageurs</th>
                             <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date Reservation</th>
                             <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date Debut Sejour</th>
@@ -229,19 +230,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         if ($conn->connect_error) {
                             die("Connection failed: " . $conn->connect_error);
                         }
-                        $sql = "SELECT r.*, c.nom, c.prenom FROM reservation r JOIN client c ON r.id_client = c.id_client";
+                        $sql = "SELECT r.*, c.nom, c.prenom, ch.type_chambre 
+                                FROM reservation r 
+                                JOIN client c ON r.id_client = c.id_client 
+                                JOIN chambre ch ON r.id_chambre = ch.id_chambre";
                         $result = $conn->query($sql);
                         if ($result->num_rows > 0) {
                             while($row = $result->fetch_assoc()) {
                                 echo "<tr>";
                                 echo "<td class='px-6 py-4 whitespace-nowrap'>" . $row["nom"] . "</td>";
                                 echo "<td class='px-6 py-4 whitespace-nowrap'>" . $row["prenom"] . "</td>";
+                                echo "<td class='px-6 py-4 whitespace-nowrap'>" . $row["type_chambre"] . "</td>";
                                 echo "<td class='px-6 py-4 whitespace-nowrap'>" . $row["nombre_voyageurs"] . "</td>";
                                 echo "<td class='px-6 py-4 whitespace-nowrap'>" . $row["date_reservation"] . "</td>";
                                 echo "<td class='px-6 py-4 whitespace-nowrap'>" . $row["date_debut_sejour"] . "</td>";
                                 echo "<td class='px-6 py-4 whitespace-nowrap'>" . $row["date_fin_sejour"] . "</td>";
                                 echo "<td class='px-6 py-4 whitespace-nowrap'>" . $row["options"] . "</td>";
-                                echo "<td class='px-6 py-4 whitespace-nowrap'>" . $row["prix_total"] . "</td>";
+                                echo "<td class='px-6 py-4 whitespace-nowrap'>" . $row["prix_total"] . "€</td>";
                                 echo "<td class='px-6 py-4 whitespace-nowrap'>
                                         <form method='POST' action=''>
                                             <input type='hidden' name='id_reservation' value='" . $row["id_reservation"] . "'>
@@ -313,6 +318,56 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         </form>
                     </div>
                 </div>
+                <h2 class="text-2xl font-bold tracking-tight text-gray-900 mt-8 mb-4">Demandes d'Annulation</h2>
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nom</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Prénom</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type de Chambre</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre Voyageurs</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date Réservation</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date Fin Séjour</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Options</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Prix Total</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        <?php
+                        $conn = connect_db();
+                        $sql = "SELECT a.id_reservation, c.nom, c.prenom, ch.type_chambre, r.nombre_voyageurs, r.date_reservation, r.date_fin_sejour, r.options, r.prix_total 
+                                FROM annulation a 
+                                JOIN reservation r ON a.id_reservation = r.id_reservation 
+                                JOIN client c ON r.id_client = c.id_client 
+                                JOIN chambre ch ON r.id_chambre = ch.id_chambre";
+                        $result = $conn->query($sql);
+                        if ($result->num_rows > 0) {
+                            while($row = $result->fetch_assoc()) {
+                                echo "<tr>";
+                                echo "<td class='px-6 py-4 whitespace-nowrap'>" . $row["nom"] . "</td>";
+                                echo "<td class='px-6 py-4 whitespace-nowrap'>" . $row["prenom"] . "</td>";
+                                echo "<td class='px-6 py-4 whitespace-nowrap'>" . $row["type_chambre"] . "</td>";
+                                echo "<td class='px-6 py-4 whitespace-nowrap'>" . $row["nombre_voyageurs"] . "</td>";
+                                echo "<td class='px-6 py-4 whitespace-nowrap'>" . $row["date_reservation"] . "</td>";
+                                echo "<td class='px-6 py-4 whitespace-nowrap'>" . $row["date_fin_sejour"] . "</td>";
+                                echo "<td class='px-6 py-4 whitespace-nowrap'>" . $row["options"] . "</td>";
+                                echo "<td class='px-6 py-4 whitespace-nowrap'>" . $row["prix_total"] . "€</td>";
+                                echo "<td class='px-6 py-4 whitespace-nowrap'>
+                                        <form method='POST' action=''>
+                                            <input type='hidden' name='id_reservation' value='" . $row["id_reservation"] . "'>
+                                            <button type='submit' name='confirm_cancel' class='bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded'>Confirmer</button>
+                                        </form>
+                                      </td>";
+                                echo "</tr>";
+                            }
+                        } else {
+                            echo "<tr><td colspan='9' class='px-6 py-4 whitespace-nowrap'>Pas de demandes d'annulation</td></tr>";
+                        }
+                        $conn->close();
+                        ?>
+                    </tbody>
+                </table>
             </div>
         </main>
     </div>

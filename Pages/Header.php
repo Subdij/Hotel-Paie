@@ -31,6 +31,8 @@
                         <?php if (isset($_SESSION['user'])): ?>
                             <?php if (isset($_SESSION['user']['id_client']) && $_SESSION['user']['id_client'] == 0): ?>
                                 <a href="/Hotel-Paie/Pages/Dashboard.php" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Admin Dashboard</a>
+                            <?php else: ?>
+                                <a href="/Hotel-Paie/Pages/Profil.php" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Votre Profil</a>
                             <?php endif; ?>
                             <span class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 font-bold">
                                 Bonjour, <?php echo isset($_SESSION['user']['prenom']) ? $_SESSION['user']['prenom'] : ''; ?> 
