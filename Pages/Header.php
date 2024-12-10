@@ -17,7 +17,7 @@
             <div class="relative flex h-16 items-center justify-between">
                 <div class="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
                     <div class="flex shrink-0 items-center">
-                        <img class="h-9 w-auto" src="https://media.discordapp.net/attachments/1307719934230528050/1315278423949574215/Untitled-1.png?ex=6758257c&is=6756d3fc&hm=931b8094bf295cebcf815377151117fdb3ef0027c4aa849d228778cb1a64f231&=&width=338&height=350" alt="logo">
+                        <img class="h-9 w-auto" src="https://i.imgur.com/7bKtwjb.png" alt="logo">
                     </div>
                     <div class="hidden sm:ml-6 sm:block">
                         <div class="flex space-x-4">
