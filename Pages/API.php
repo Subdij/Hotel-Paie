@@ -68,6 +68,13 @@ function confirm_cancel_reservation($id_reservation) {
     $conn->close();
 }
 
+function revoke_cancel_reservation($id_reservation) {
+    $conn = connect_db();
+    $sql = "DELETE FROM annulation WHERE id_reservation='$id_reservation'";
+    $conn->query($sql);
+    $conn->close();
+}
+
 function edit_reservation($id_reservation) {
     $conn = connect_db();
     $sql = "SELECT * FROM reservation WHERE id_reservation='$id_reservation'";
@@ -212,6 +219,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     } elseif (isset($_POST['confirm_cancel'])) {
         confirm_cancel_reservation($_POST['id_reservation']);
+
+    } elseif (isset($_POST['revoke_cancel'])) {
+        revoke_cancel_reservation($_POST['id_reservation']);
 
     } elseif (isset($_POST['edit_reservation'])) {
         $editReservation = edit_reservation($_POST['id_reservation']);

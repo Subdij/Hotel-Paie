@@ -363,6 +363,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         <form method='POST' action=''>
                                             <input type='hidden' name='id_reservation' value='" . $row["id_reservation"] . "'>
                                             <button type='submit' name='confirm_cancel' class='bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded'>Confirmer</button>
+                                            <button type='submit' name='revoke_cancel' class='bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded'>Révoquer</button>
                                         </form>
                                       </td>";
                                 echo "</tr>";
