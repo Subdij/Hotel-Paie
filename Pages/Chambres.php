@@ -117,7 +117,7 @@
 
             // Afficher un message si aucune recherche n'a été effectuée
             if (empty($checkin) || empty($checkout)) {
-                echo "<p>Veuillez effectuer une recherche par date pour voir les chambres disponibles.</p>";
+                echo "<p id='message_faire_recherche'>Veuillez effectuer une recherche par date pour voir les chambres disponibles.</p>";
             } else {
                 // Construire la requête SQL de base
                 $sql = "SELECT * FROM chambre WHERE 1";
