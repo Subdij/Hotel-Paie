@@ -20,6 +20,11 @@ if ($conn->connect_error) {
 // Récupération de l'ID de la chambre sélectionnée via $_GET
 $id_chambre = $_GET['id_chambre'] ?? null;
 
+// Récupération des dates transmises via $_GET
+$checkin = $_GET['checkin'] ?? '';
+$checkout = $_GET['checkout'] ?? '';
+$voyageurs = $_GET['guests'] ?? 1;
+
 // Récupération des informations de la chambre
 $chambre = null;
 if ($id_chambre) {
@@ -127,9 +132,9 @@ $conn->close();
                         <label>Téléphone : <input type="text" name="telephone" value="<?= htmlspecialchars($user['num_tel'] ?? '') ?>" required></label>
 
                         <h4>2 - Détails du séjour</h4>
-                        <label>Date d'arrivée : <input type="date" name="date_arrivee" value="<?= htmlspecialchars($_POST['checkin'] ?? '') ?>" min="' . date('Y-m-d') . '" required></label>
-                        <label>Date de départ : <input type="date" name="date_depart" value="<?= htmlspecialchars($_POST['checkout'] ?? '') ?>" required></label>
-                        <label>Nombre de voyageurs : <input type="number" name="voyageurs" min="1" value="<?= htmlspecialchars($_POST['guests'] ?? 1) ?>" required></label>
+                        <label>Date d'arrivée : <input type="date" name="date_arrivee" value="<?= htmlspecialchars($checkin) ?>" required></label>
+                        <label>Date de départ : <input type="date" name="date_depart" value="<?= htmlspecialchars($checkout) ?>" required></label>
+                        <label>Nombre de voyageurs : <input type="number" name="voyageurs" min="1" value="<?= htmlspecialchars($voyageurs) ?>" required></label>
 
                         <h4>3 - Options</h4>
                         <div class="options">

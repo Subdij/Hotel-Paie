@@ -115,74 +115,79 @@
                 $message = "Pour les groupes de plus de 4 personnes, veuillez réserver plusieurs chambres.";
             }
 
-            // Construire la requête SQL de base
-            $sql = "SELECT * FROM chambre WHERE 1";
-
-            // Ajouter les conditions de recherche par date
-            if ($checkin && $checkout) {
-                $sql .= "
-                    AND id_chambre NOT IN (
-                        SELECT id_chambre
-                        FROM reservation
-                        WHERE (date_debut_sejour < '$checkout' AND date_fin_sejour > '$checkin')
-                    )
-                ";
-            }
-
-            // Ajouter la condition sur le nombre de voyageurs
-            if ($guests) {
-                if ($guests < 5) {
-                    $sql .= " AND capacite_max >= $guests";
-                }
-            }
-
-            // Ajouter la condition sur le type de chambre
-            if ($type_chambre) {
-                $sql .= " AND type_chambre = '$type_chambre'";
-            }
-
-            // Ajouter le tri
-            if ($tri === 'prix_asc') {
-                $sql .= " ORDER BY prix_par_nuit ASC";
-            } elseif ($tri === 'prix_desc') {
-                $sql .= " ORDER BY prix_par_nuit DESC";
-            }
-
-            // Exécuter la requête
-            $result = $conn->query($sql);
-
-            // Afficher les chambres disponibles
-            if ($result->num_rows > 0) {
-
-                // Si plus de 4 voyageurs, afficher un message
-                if ($guests > 4) {
-                    echo "<p class='alert-message'>$message</p>";
-                }
-
-                // Affichage des chambres disponibles
-                while ($row = $result->fetch_assoc()) {
-                    echo "<div class='room'>";
-                    echo "<img src='" . htmlspecialchars($row['url_image']) . "' alt='Chambre'>";
-                    echo "<h2>Chambre " . htmlspecialchars($row['type_chambre']) . "</h2>";
-                    echo "<p1>". htmlspecialchars($row['description']) . "</p>";
-                    echo "<p2><u>Prix:</u> " . htmlspecialchars($row['prix_par_nuit']) . " € par nuit</p>";
-                    echo "<p3><u>Capacité maximale:</u> " . htmlspecialchars($row['capacite_max']) . " personnes</p>";
-                    echo "<form action='Reservations.php' method='GET'>";
-                    echo "<input type='hidden' name='id_chambre' value='" . htmlspecialchars($row['id_chambre']) . "'>";
-                    echo "<input type='hidden' name='url_image' value='" . htmlspecialchars($row['url_image']) . "'>";
-                    echo "<input type='hidden' name='type_chambre' value='" . htmlspecialchars($row['type_chambre']) . "'>";
-                    echo "<input type='hidden' name='description' value='" . htmlspecialchars($row['description']) . "'>";
-                    echo "<input type='hidden' name='prix_par_nuit' value='" . htmlspecialchars($row['prix_par_nuit']) . "'>";
-                    echo "<input type='hidden' name='capacite_max' value='" . htmlspecialchars($row['capacite_max']) . "'>";
-                    echo "<input type='hidden' name='checkin' value='" . htmlspecialchars($checkin) . "'>";
-                    echo "<input type='hidden' name='checkout' value='" . htmlspecialchars($checkout) . "'>";
-                    echo "<input type='hidden' name='guests' value='" . htmlspecialchars($guests) . "'>";
-                    echo "<button type='submit'>Réserver</button>";
-                    echo "</form>";
-                    echo "</div>";
-                }
+            // Afficher un message si aucune recherche n'a été effectuée
+            if (empty($checkin) || empty($checkout)) {
+                echo "<p>Veuillez effectuer une recherche par date pour voir les chambres disponibles.</p>";
             } else {
-                echo "<p>Aucune chambre disponible pour les critères sélectionnés.</p>";
+                // Construire la requête SQL de base
+                $sql = "SELECT * FROM chambre WHERE 1";
+
+                // Ajouter les conditions de recherche par date
+                if ($checkin && $checkout) {
+                    $sql .= "
+                        AND id_chambre NOT IN (
+                            SELECT id_chambre
+                            FROM reservation
+                            WHERE (date_debut_sejour < '$checkout' AND date_fin_sejour > '$checkin')
+                        )
+                    ";
+                }
+
+                // Ajouter la condition sur le nombre de voyageurs
+                if ($guests) {
+                    if ($guests < 5) {
+                        $sql .= " AND capacite_max >= $guests";
+                    }
+                }
+
+                // Ajouter la condition sur le type de chambre
+                if ($type_chambre) {
+                    $sql .= " AND type_chambre = '$type_chambre'";
+                }
+
+                // Ajouter le tri
+                if ($tri === 'prix_asc') {
+                    $sql .= " ORDER BY prix_par_nuit ASC";
+                } elseif ($tri === 'prix_desc') {
+                    $sql .= " ORDER BY prix_par_nuit DESC";
+                }
+
+                // Exécuter la requête
+                $result = $conn->query($sql);
+
+                // Afficher les chambres disponibles
+                if ($result->num_rows > 0) {
+
+                    // Si plus de 4 voyageurs, afficher un message
+                    if ($guests > 4) {
+                        echo "<p class='alert-message'>$message</p>";
+                    }
+
+                    // Affichage des chambres disponibles
+                    while ($row = $result->fetch_assoc()) {
+                        echo "<div class='room'>";
+                        echo "<img src='" . htmlspecialchars($row['url_image']) . "' alt='Chambre'>";
+                        echo "<h2>Chambre " . htmlspecialchars($row['type_chambre']) . "</h2>";
+                        echo "<p1>". htmlspecialchars($row['description']) . "</p>";
+                        echo "<p2><u>Prix:</u> " . htmlspecialchars($row['prix_par_nuit']) . " € par nuit</p>";
+                        echo "<p3><u>Capacité maximale:</u> " . htmlspecialchars($row['capacite_max']) . " personnes</p>";
+                        echo "<form action='Reservations.php' method='GET'>";
+                        echo "<input type='hidden' name='id_chambre' value='" . htmlspecialchars($row['id_chambre']) . "'>";
+                        echo "<input type='hidden' name='url_image' value='" . htmlspecialchars($row['url_image']) . "'>";
+                        echo "<input type='hidden' name='type_chambre' value='" . htmlspecialchars($row['type_chambre']) . "'>";
+                        echo "<input type='hidden' name='description' value='" . htmlspecialchars($row['description']) . "'>";
+                        echo "<input type='hidden' name='prix_par_nuit' value='" . htmlspecialchars($row['prix_par_nuit']) . "'>";
+                        echo "<input type='hidden' name='capacite_max' value='" . htmlspecialchars($row['capacite_max']) . "'>";
+                        echo "<input type='hidden' name='checkin' value='" . htmlspecialchars($checkin) . "'>";
+                        echo "<input type='hidden' name='checkout' value='" . htmlspecialchars($checkout) . "'>";
+                        echo "<input type='hidden' name='guests' value='" . htmlspecialchars($guests) . "'>";
+                        echo "<button type='submit'>Réserver</button>";
+                        echo "</form>";
+                        echo "</div>";
+                    }
+                } else {
+                    echo "<p>Aucune chambre disponible pour les critères sélectionnés.</p>";
+                }
             }
 
             // Fermeture de la connexion
