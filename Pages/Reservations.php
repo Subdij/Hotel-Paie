@@ -71,8 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($stmt->execute()) {
         echo "<script>
-                alert('Réservation confirmée !');
-                window.location.href = '../index.php';
+                window.location.href = '../Pages/Confirmation.php';
               </script>";
     } else {
         echo json_encode(['success' => false, 'message' => $stmt->error]);
