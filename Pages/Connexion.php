@@ -1,5 +1,7 @@
 <?php
 session_start();
+include 'API.php';
+
 $errors = [];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -15,39 +17,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     if (empty($errors)) {
-        // Connexion à la base de données
-        $servername = "localhost";
-        $username = "root";
-        $password_db = "";
-        $dbname = "hotel"; // Updated database name
-
-        $conn = new mysqli($servername, $username, $password_db, $dbname);
-
-        if ($conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
-        }
-
+        $conn = connect_db();
         $sql = "SELECT * FROM client WHERE adresse_mail = ?";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("s", $email);
         $stmt->execute();
         $result = $stmt->get_result();
+        $user = $result->fetch_assoc();
+        $stmt->close();
+        $conn->close();
 
-        if ($result->num_rows > 0) {
-            $user = $result->fetch_assoc();
-            if (password_verify($password, $user['mot_de_passe'])) {
-                $_SESSION['user'] = $user;
-                header("Location: ../index.php");
-                exit();
-            } else {
-                $errors['general'] = "Email ou mot de passe invalide.";
-            }
+        if ($user && password_verify($password, $user['mot_de_passe'])) {
+            $_SESSION['user'] = $user;
+            header("Location: ../index.php");
+            exit();
         } else {
             $errors['general'] = "Email ou mot de passe invalide.";
         }
-
-        $stmt->close();
-        $conn->close();
     }
 }
 ?>

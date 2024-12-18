@@ -48,8 +48,6 @@ function add_client($nom, $prenom, $num_tel, $adresse_mail, $mot_de_passe) {
     $sql = "INSERT INTO client (nom, prenom, num_tel, adresse_mail, mot_de_passe) VALUES ('$nom', '$prenom', '$num_tel', '$adresse_mail', '$mot_de_passe')";
     $conn->query($sql);
     $conn->close();
-    header("Location: " . $_SERVER['PHP_SELF']);
-    exit();
 }
 
 function cancel_reservation($id_reservation) {

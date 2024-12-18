@@ -52,13 +52,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmt = $conn->prepare($sql);
             $stmt->bind_param("sssss", $nom, $prenom, $email, $num_tel, $hashed_password);
             if ($stmt->execute()) {
-                $_SESSION['user'] = [
-                    'nom' => $nom,
-                    'prenom' => $prenom,
-                    'adresse_mail' => $email,
-                    'num_tel' => $num_tel,
-                    'mot_de_passe' => $hashed_password
-                ];
+                // Fetch the newly created user
+                $sql = "SELECT * FROM client WHERE adresse_mail = ?";
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param("s", $email);
+                $stmt->execute();
+                $result = $stmt->get_result();
+                $user = $result->fetch_assoc();
+                $stmt->close();
+                $conn->close();
+
+                // Set the session user
+                $_SESSION['user'] = $user;
+
+                // Redirect to the homepage
                 header("Location: ../index.php");
                 exit();
             } else {

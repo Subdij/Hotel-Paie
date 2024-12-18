@@ -42,6 +42,11 @@ $user = $_SESSION['user'] ?? null;
 
 // Gestion de la réservation
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!$user) {
+        echo json_encode(['success' => false, 'message' => 'Utilisateur non connecté']);
+        exit;
+    }
+
     if (isset($_POST['prix_total'], $_POST['date_arrivee'], $_POST['date_depart'], $_POST['voyageurs'])) {
         $options = isset($_POST['options']) ? json_encode($_POST['options']) : json_encode([]);
         $prix_total = (float)$_POST['prix_total'];
@@ -55,7 +60,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Reste des données
     $date_reservation = date('Y-m-d H:i:s');
-    $id_client = $user['id_client'];
+    $id_client = $user['id_client'] ?? null;
+
+    if (!$id_client) {
+        echo json_encode(['success' => false, 'message' => 'ID client non défini']);
+        exit;
+    }
+
     $id_chambre = $_POST['id_chambre'];
 
     // Insérer la réservation
@@ -338,4 +349,4 @@ $conn->close();
         });
     </script>
 </body>
-</html> 
+</html>
